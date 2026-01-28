@@ -39,16 +39,30 @@ header {
 }
 
 .header-flex {
-    display: flex; justify-content: space-between; align-items: center; width: 100%;
-    max-width: 1280px; margin: 0 auto;
+    display: flex;
+    justify-content: space-between; /* Mantém logos nas pontas */
+    align-items: center;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    
+    /* ADICIONE ISSO: */
+    position: relative; /* Permite centralizar o filho (menu) */
 }
 
 /* Logos */
 .logo-left img { height: 60px; width: auto; } /* Ajuste fino */
 .logo-right img { height: 75px; width: auto; }
 
+
 /* MENU DESKTOP (Padrão) */
-.nav-menu ul { display: flex; gap: 30px; list-style: none; }
+.nav-menu ul {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
 .nav-menu a {
     color: #FFF; text-decoration: none; font-size: 18px; font-weight: 300;
     transition: color 0.3s;
@@ -197,6 +211,15 @@ header {
     .kpi-grid-centered { gap: 15px; }
 }
 
+@media (min-width: 901px) {
+  .nav-menu {
+    position: absolute;        /* Solta o menu */
+    left: 50%;                 /* Manda para o meio */
+    transform: translateX(-50%); /* Ajusta o eixo exato */
+    white-space: nowrap;       /* Garante que não quebre linha */
+  }
+}
+
 /* MOBILE (Até 768px) */
 @media (max-width: 768px) {
     
@@ -224,12 +247,20 @@ header {
 
     /* Ajuste para centralizar a Logo Esquerda já que a direita sumiu */
     .header-flex {
-        justify-content: center; /* Centraliza a logo principal */
-    }
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    
+        /* ADICIONE ESTA LINHA: */
+        position: relative; 
+}
     
     .nav-menu {
         position: fixed;
         top: 0;
+        left: auto;
+        transform: none;
         right: -100%; /* Começa escondido fora da tela */
         width: 70%;   /* Ocupa 70% da tela */
         height: 100vh;
