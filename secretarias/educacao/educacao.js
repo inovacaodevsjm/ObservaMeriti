@@ -1,143 +1,173 @@
 /* =======================================================================
-   SCRIPT: DASHBOARD EDUCAÇÃO (CARREGAMENTO PADRÃO SJM)
+   EDUCACAO.JS - DASHBOARD E GRÁFICOS OTIMIZADOS
+   Descrição: Scripts específicos para a página de Educação (SJM).
    ======================================================================= */
+
+// --- 1. CONFIGURAÇÃO GLOBAL E DADOS ---
+
+const COLORS = {
+    green: '#009039',
+    yellow: '#FDC806',
+    blue: '#00A8E8',
+    purple: '#8E44AD',
+    pink: '#E91E63',
+    darkBlue: '#0056b3',
+    gray: '#CCCCCC',
+    text: '#AAA',
+    grid: 'rgba(255, 255, 255, 0.05)'
+};
+
+// Dados Estáticos (Armazenados aqui por enquanto)
+const DB = {
+    ideb: { 
+        iniciais: { labels: ['05', '07', '09', '11', '13', '15', '17', '19', '21', '23'], datasets: [{ label: 'Anos Iniciais', data: [3.7, 3.6, 4.0, 4.2, 4.5, 4.5, 4.6, 4.9, 4.6, 4.9], backgroundColor: COLORS.blue, borderRadius: 4 }] },
+        finais: { labels: ['05', '07', '09', '11', '13', '15', '17', '19', '21', '23'], datasets: [{ label: 'Anos Finais', data: [2.6, 2.5, 3.5, 3.5, 3.2, 3.8, 3.5, 3.6, 4.1, 4.2], backgroundColor: COLORS.yellow, borderRadius: 4 }] }
+    },
+    matriculas: {
+        infantil: { labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'], datasets: [{ label: 'Pré-escola', data: [68.0, 68.5, 69.0, 69.5, 70.0, 70.4, 70.8], backgroundColor: COLORS.blue, borderRadius: 4 }, { label: 'Creche', data: [32.0, 31.5, 31.0, 30.5, 30.0, 29.6, 29.2], backgroundColor: COLORS.green, borderRadius: 4 }] },
+        fundamental: { labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'], datasets: [{ label: 'Anos Iniciais', data: [56.8, 56.8, 56.3, 56.9, 57.9, 57.9, 58.5], backgroundColor: COLORS.purple, borderRadius: 4 }, { label: 'Anos Finais', data: [43.2, 43.2, 43.7, 43.1, 42.1, 42.1, 41.5], backgroundColor: COLORS.yellow, borderRadius: 4 }] }
+    },
+    taxas: {
+        distorcao: { labels: ['18', '19', '20', '21', '22', '23', '24'], datasets: [{ label: 'Fundamental', data: [29.8, 29.1, 28.4, 27.6, 26.9, 26.1, 25.4], backgroundColor: COLORS.green }, { label: 'Médio', data: [24.9, 24.3, 23.7, 23.1, 22.5, 21.9, 21.3], backgroundColor: COLORS.yellow }] },
+        abandono: { labels: ['18', '19', '20', '21', '22', '23', '24'], datasets: [{ label: 'Fundamental', data: [2.04, 1.88, 1.72, 1.56, 1.40, 1.25, 1.10], backgroundColor: COLORS.green }, { label: 'Médio', data: [3.08, 3.09, 3.10, 3.11, 3.13, 3.14, 3.16], backgroundColor: COLORS.pink }] }
+    },
+    enem: { 
+        "2023": { "genero": [{ label: "Masculino", data: [344, 349, 313, 355], backgroundColor: COLORS.blue }, { label: "Feminino", data: [315, 349, 301, 350], backgroundColor: COLORS.pink }], "administracao": [{ label: "Federal", data: [529, 507, 435, 510], backgroundColor: COLORS.darkBlue }, { label: "Municipal", data: [101, 141, 100, 130], backgroundColor: COLORS.yellow }] } 
+    },
+    comparativo: { 
+        labels: ['2017', '2018', '2019', '2020', '2021', '2022', '2023'], 
+        datasets: [
+            { label: 'Brasil', data: [500.4, 514.4, 491.2, 232.8, 339.7, 349.8, 354.1], borderColor: COLORS.green, borderDash: [5, 5] },
+            { label: 'Rio de Janeiro', data: [542.5, 557.8, 534.1, 261.2, 374.5, 387.2, 360.6], borderColor: COLORS.blue },
+            { label: 'São João De Meriti', data: [511.7, 529.1, 503.2, 218.9, 333.5, 349.2, 332.8], borderColor: COLORS.yellow, borderWidth: 4 }
+        ]
+    }
+};
+
+// Replica dados do ENEM para anos anteriores (Mockup)
+["2017", "2018", "2019", "2020", "2021", "2022"].forEach(y => DB.enem[y] = JSON.parse(JSON.stringify(DB.enem["2023"])));
+
+
+// --- 2. INICIALIZAÇÃO ---
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Configura defaults do Chart.js uma única vez
+    Chart.defaults.font.family = "'Poppins', sans-serif";
+    Chart.defaults.color = COLORS.text;
+    Chart.defaults.scale.grid.color = COLORS.grid;
+    Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(0,0,0,0.9)';
+    Chart.defaults.plugins.tooltip.titleColor = COLORS.yellow;
+
     initScrollAnimation();
     initKpiCounters();
-    initCardLoaders(); // Inicia o sistema de loaders idêntico ao index
+    initLoaderSystem(); 
 });
 
+
 /* =======================================================================
-   1. SISTEMA DE CARREGAMENTO (IGUAL AO SCRIPT.JS)
+   3. SISTEMA DE LOADERS (Efeito Tech)
    ======================================================================= */
 
-function initCardLoaders() {
+function initLoaderSystem() {
     const cards = document.querySelectorAll('.analise-card');
     let chartsInitialized = false;
 
-    // 1. Prepara todos os cards (Adiciona classe loading e insere o HTML do loader)
     cards.forEach(card => {
         card.classList.add('is-loading');
-        
-        // HTML exato do seu style.css (.tech-loader)
-        const loaderHTML = `<div class="loader-container"><div class="tech-loader"></div></div>`;
-        card.insertAdjacentHTML('beforeend', loaderHTML);
+        // Adiciona loader tech via JS
+        card.insertAdjacentHTML('beforeend', `<div class="loader-container"><div class="tech-loader"></div></div>`);
     });
 
-    // 2. Observa quando cada card entra na tela
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const card = entry.target;
                 const loader = card.querySelector('.loader-container');
-                
-                // Para de observar este card (para não carregar de novo)
                 observer.unobserve(card);
 
-                // 3. Simula o processamento (2 Segundos)
+                // Delay de 2s para simular processamento
                 setTimeout(() => {
-                    // A) Remove visualmente o loader
                     if(loader) loader.style.opacity = '0';
-                    
-                    // B) Troca as classes para disparar a animação CSS (fadeUpContent)
                     card.classList.remove('is-loading');
                     card.classList.add('is-loaded');
 
-                    // C) Remove o elemento do DOM depois que sumir
                     setTimeout(() => { if(loader) loader.remove(); }, 500);
 
-                    // D) Inicializa os gráficos (apenas na primeira vez que um card aparece)
+                    // Inicia gráficos apenas na primeira visualização
                     if (!chartsInitialized) {
-                        initCharts(); 
+                        initAllCharts();
                         chartsInitialized = true;
                     }
-                }, 2000); // 2000ms = 2 segundos
+                }, 2000);
             }
         });
-    }, { threshold: 0.2 }); // Dispara quando 20% do card está visível
+    }, { threshold: 0.2 });
 
     cards.forEach(card => observer.observe(card));
 }
 
 
 /* =======================================================================
-   2. INICIALIZAÇÃO DOS GRÁFICOS
+   4. FABRICA DE GRÁFICOS
    ======================================================================= */
 
-function initCharts() {
-    // Verifica e cria cada gráfico se o elemento existir
-    if(document.getElementById('chartEvolucaoMatriculas')) createEvolucaoChart();
-    if(document.getElementById('chartIdeb')) createIdebChart();
-    if(document.getElementById('chartTaxasRendimento')) createTaxasBarChart();
-    if(document.getElementById('chartMatriculas')) createMatriculasChart();
-    if(document.getElementById('chartEnem2')) createEnemBarChart('chartEnem2', 'filterEnemYear2', 'filterEnemCategory2');
-    if(document.getElementById('chartEnemComparativo2')) createComparativoLineChart('chartEnemComparativo2', '.mun-checkbox-2');
-    if(document.getElementById('chartEnem')) createEnemBarChart('chartEnem', 'filterEnemYear', 'filterEnemCategory');
-    if(document.getElementById('chartEnemComparativo')) createComparativoLineChart('chartEnemComparativo', '.mun-checkbox');
+function initAllCharts() {
+    // 1. Evolução Matrículas (Gradiente)
+    createEvolucaoChart();
+
+    // 2. IDEB (Barras com Labels)
+    createDynamicBarChart('chartIdeb', 'filterIdebType', DB.ideb, (val) => val.toFixed(1));
+
+    // 3. Taxas de Rendimento
+    createDynamicBarChart('chartTaxasRendimento', 'filterTaxasType', DB.taxas, (val) => val.toFixed(1) + '%');
+
+    // 4. Distribuição Matrículas
+    createDynamicBarChart('chartMatriculas', 'filterMatriculasType', DB.matriculas, (val) => val.toFixed(1) + '%');
+
+    // 5. ENEM (Barras)
+    if(document.getElementById('chartEnem')) createEnemChart('chartEnem', 'filterEnemYear', 'filterEnemCategory');
+    if(document.getElementById('chartEnem2')) createEnemChart('chartEnem2', 'filterEnemYear2', 'filterEnemCategory2');
+
+    // 6. ENEM (Comparativo Linhas)
+    if(document.getElementById('chartEnemComparativo')) createLineComparison('chartEnemComparativo', '.mun-checkbox');
+    if(document.getElementById('chartEnemComparativo2')) createLineComparison('chartEnemComparativo2', '.mun-checkbox-2');
+
 }
 
-
-/* =======================================================================
-   3. BANCO DE DADOS E FUNÇÕES DE GRÁFICO (MANTIDOS)
-   ======================================================================= */
-// ... (O restante do código de dados e funções create... permanece igual) ...
-
-const enemFullData = { "2023": { "genero": [ { label: "Masculino", data: [344, 349, 313, 355], backgroundColor: "#00A8E8", borderRadius: 4 }, { label: "Feminino", data: [315, 349, 301, 350], backgroundColor: "#E91E63", borderRadius: 4 } ], "localizacao": [ { label: "Urbana", data: [389, 400, 354, 404], backgroundColor: "#00A8E8", borderRadius: 4 } ], "administracao": [ { label: "Federal", data: [529, 507, 435, 510], backgroundColor: "#0056b3", borderRadius: 4 }, { label: "Estadual", data: [351, 351, 299, 351], backgroundColor: "#009039", borderRadius: 4 }, { label: "Privada", data: [564, 525, 498, 537], backgroundColor: "#CCCCCC", borderRadius: 4 }, { label: "Municipal", data: [101, 141, 100, 130], backgroundColor: "#FDC806", borderRadius: 4 } ] } };
-["2017", "2018", "2019", "2020", "2021", "2022"].forEach(y => enemFullData[y] = JSON.parse(JSON.stringify(enemFullData["2023"])));
-
-const compData = { labels: ['2017', '2018', '2019', '2020', '2021', '2022', '2023'], datasets: { 'Brasil': { label: 'Brasil', data: [500.4, 514.4, 491.2, 232.8, 339.7, 349.8, 354.1], borderColor: '#009039', backgroundColor: '#009039', borderDash: [5, 5], borderWidth: 2 }, 'Rio De Janeiro': { label: 'Rio de Janeiro', data: [542.5, 557.8, 534.1, 261.2, 374.5, 387.2, 360.6], borderColor: '#00A8E8', backgroundColor: '#00A8E8', borderWidth: 2 }, 'São Gonçalo': { label: 'São Gonçalo', data: [520.0, 535.7, 511.3, 247.3, 357.6, 370.0, 354.1], borderColor: '#8E44AD', backgroundColor: '#8E44AD', borderWidth: 2 }, 'São João De Meriti': { label: 'São João De Meriti', data: [511.7, 529.1, 503.2, 218.9, 333.5, 349.2, 332.8], borderColor: '#FDC806', backgroundColor: '#FDC806', borderWidth: 4, pointRadius: 5 } } };
-
-const taxasData = { "distorcao": { labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'], datasets: [ { label: 'Ensino Fundamental', data: [29.8, 29.1, 28.4, 27.6, 26.9, 26.1, 25.4], backgroundColor: '#009039', borderRadius: 4, barPercentage: 0.7 }, { label: 'Ensino Médio', data: [24.9, 24.3, 23.7, 23.1, 22.5, 21.9, 21.3], backgroundColor: '#FDC806', borderRadius: 4, barPercentage: 0.7 } ] }, "abandono": { labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'], datasets: [ { label: 'Ensino Fundamental', data: [2.04, 1.88, 1.72, 1.56, 1.40, 1.25, 1.10], backgroundColor: '#009039', borderRadius: 4, barPercentage: 0.7 }, { label: 'Ensino Médio', data: [3.08, 3.09, 3.10, 3.11, 3.13, 3.14, 3.16], backgroundColor: '#E91E63', borderRadius: 4, barPercentage: 0.7 } ] } };
-
-const matriculasData = { "infantil": { labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'], datasets: [ { label: 'Pré-escola', data: [68.0, 68.5, 69.0, 69.5, 70.0, 70.4, 70.8], backgroundColor: '#00A8E8', borderRadius: 4, barPercentage: 0.6 }, { label: 'Creche', data: [32.0, 31.5, 31.0, 30.5, 30.0, 29.6, 29.2], backgroundColor: '#009039', borderRadius: 4, barPercentage: 0.6 } ] }, "fundamental": { labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'], datasets: [ { label: 'Anos Iniciais', data: [56.8, 56.8, 56.3, 56.9, 57.9, 57.9, 58.5], backgroundColor: '#8E44AD', borderRadius: 4, barPercentage: 0.6 }, { label: 'Anos Finais', data: [43.2, 43.2, 43.7, 43.1, 42.1, 42.1, 41.5], backgroundColor: '#FDC806', borderRadius: 4, barPercentage: 0.6 } ] } };
-
-const idebData = { "iniciais": { labels: ['2005', '2007', '2009', '2011', '2013', '2015', '2017', '2019', '2021', '2023'], datasets: [{ label: 'Anos Iniciais', data: [3.7, 3.6, 4.0, 4.2, 4.5, 4.5, 4.6, 4.9, 4.6, 4.9], backgroundColor: '#00A8E8', borderRadius: 4, barPercentage: 0.6 }] }, "finais": { labels: ['2005', '2007', '2009', '2011', '2013', '2015', '2017', '2019', '2021', '2023'], datasets: [{ label: 'Anos Finais', data: [2.6, 2.5, 3.5, 3.5, 3.2, 3.8, 3.5, 3.6, 4.1, 4.2], backgroundColor: '#FDC806', borderRadius: 4, barPercentage: 0.6 }] }, "medio": { labels: ['2005', '2007', '2009', '2011', '2013', '2015', '2017', '2019', '2021', '2023'], datasets: [{ label: 'Ensino Médio', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], backgroundColor: '#E91E63', borderRadius: 4, barPercentage: 0.6 }] } };
-
-// FUNÇÕES DE CRIAÇÃO (MANTIDAS)
-function createIdebChart() {
-    const ctx = document.getElementById('chartIdeb').getContext('2d');
-    let chart = new Chart(ctx, {
-        type: 'bar',
-        data: { labels: idebData['iniciais'].labels, datasets: idebData['iniciais'].datasets },
-        plugins: [{
-            id: 'idebLabels',
-            afterDatasetsDraw(chart) {
-                const { ctx } = chart;
-                ctx.save();
-                chart.data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    if (!meta.hidden) {
-                        meta.data.forEach((element, index) => {
-                            const data = dataset.data[index];
-                            if(data >= 0) { ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(data.toFixed(1), element.x, element.y - 5); }
-                        });
+// --- HELPER: Cria Plugin de Labels (Números em cima das barras) ---
+const createLabelPlugin = (formatter) => ({
+    id: 'customLabels',
+    afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        ctx.save();
+        chart.data.datasets.forEach((dataset, i) => {
+            const meta = chart.getDatasetMeta(i);
+            if (!meta.hidden) {
+                meta.data.forEach((el, index) => {
+                    const val = dataset.data[index];
+                    if(val && val > 0) {
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.font = 'bold 10px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        ctx.fillText(formatter(val), el.x, el.y - 5);
                     }
                 });
-                ctx.restore();
             }
-        }],
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#CCC', font: {size: 11} } }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', titleColor: '#FDC806' } },
-            scales: { x: { grid: { display: false }, ticks: { color: '#AAA' } }, y: { display: true, beginAtZero: true, max: 6.0, grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false }, ticks: { color: '#888', display: true } } }
-        }
-    });
-    const filter = document.getElementById('filterIdebType');
-    if(filter) {
-        filter.addEventListener('change', function() {
-            const tipo = this.value;
-            const newData = idebData[tipo];
-            chart.data.labels = newData.labels;
-            chart.data.datasets = newData.datasets;
-            chart.update();
         });
+        ctx.restore();
     }
-}
+});
+
+
+// --- GRÁFICOS ESPECÍFICOS ---
 
 function createEvolucaoChart() {
-    const ctx = document.getElementById('chartEvolucaoMatriculas').getContext('2d');
-    let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    const ctx = document.getElementById('chartEvolucaoMatriculas');
+    if(!ctx) return;
+    
+    // Gradiente bonito
+    const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, 'rgba(0, 168, 232, 0.5)'); 
     gradient.addColorStop(1, 'rgba(0, 168, 232, 0.0)');
 
@@ -147,221 +177,145 @@ function createEvolucaoChart() {
             labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024'],
             datasets: [{
                 label: 'Total de Matrículas', data: [26188, 26363, 26009, 26119, 27895, 28499, 28377],
-                borderColor: '#00A8E8', backgroundColor: gradient, borderWidth: 3, pointBackgroundColor: '#FFFFFF', pointBorderColor: '#00A8E8', pointRadius: 5, fill: true, tension: 0.4
+                borderColor: COLORS.blue, backgroundColor: gradient, borderWidth: 3,
+                pointBackgroundColor: '#FFF', pointBorderColor: COLORS.blue, pointRadius: 5, fill: true, tension: 0.4
             }]
         },
-        plugins: [{
-            id: 'evolucaoLabels',
-            afterDatasetsDraw(chart) {
-                const { ctx } = chart;
-                ctx.save();
-                chart.data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    if (!meta.hidden) {
-                        meta.data.forEach((element, index) => {
-                            const val = dataset.data[index];
-                            if (index === 0 || index === dataset.data.length - 1 || val === Math.max(...dataset.data)) {
-                                ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(val.toLocaleString('pt-BR'), element.x, element.y - 8);
-                            }
-                        });
-                    }
-                });
-                ctx.restore();
-            }
-        }],
+        plugins: [createLabelPlugin((v) => v.toLocaleString('pt-BR'))],
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', titleColor: '#00A8E8' } },
-            scales: { x: { grid: { display: false }, ticks: { color: '#AAA' } }, y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#888' }, beginAtZero: false } }
+            plugins: { legend: { display: false } },
+            scales: { x: { grid: { display: false } }, y: { display: false } }
         }
     });
 }
 
-function createTaxasBarChart() {
-    const ctx = document.getElementById('chartTaxasRendimento').getContext('2d');
-    let chart = new Chart(ctx, {
+function createDynamicBarChart(canvasId, filterId, dataSource, formatFn) {
+    const ctx = document.getElementById(canvasId);
+    if(!ctx) return;
+
+    // Pega primeira chave do objeto de dados para inicializar
+    const initialKey = Object.keys(dataSource)[0];
+    const initialData = dataSource[initialKey];
+
+    const chart = new Chart(ctx, {
         type: 'bar',
-        data: { labels: taxasData['distorcao'].labels, datasets: taxasData['distorcao'].datasets },
-        plugins: [{
-            id: 'taxasLabels',
-            afterDatasetsDraw(chart) {
-                const { ctx } = chart;
-                ctx.save();
-                chart.data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    if (!meta.hidden) {
-                        meta.data.forEach((element, index) => {
-                            const data = dataset.data[index];
-                            if(data > 0) { ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(data.toFixed(1) + '%', element.x, element.y - 5); }
-                        });
-                    }
-                });
-                ctx.restore();
-            }
-        }],
+        data: { labels: initialData.labels, datasets: initialData.datasets },
+        plugins: [createLabelPlugin(formatFn)],
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#CCC' } }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', titleColor: '#FDC806' } },
-            scales: { x: { grid: { display: false }, ticks: { color: '#AAA' } }, y: { display: true, beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false }, ticks: { color: '#888', display: true } } }
+            plugins: { legend: { labels: { color: COLORS.gray } } },
+            scales: { x: { grid: { display: false } }, y: { display: true, grid: { color: COLORS.grid } } }
         }
     });
-    const filter = document.getElementById('filterTaxasType');
+
+    // Configura o filtro (Select)
+    const filter = document.getElementById(filterId);
     if(filter) {
         filter.addEventListener('change', function() {
-            const tipo = this.value;
-            const newData = taxasData[tipo];
-            chart.data.labels = newData.labels;
-            chart.data.datasets = newData.datasets;
-            chart.update();
-            const desc = this.closest('.sebrae-info').querySelector('.info-description');
-            if(desc) {
-                if(tipo === 'distorcao') desc.innerHTML = 'A taxa de distorção idade-série variou de <strong>29.8%</strong> para <strong>25.4%</strong> (Fundamental) e de <strong>24.9%</strong> para <strong>21.3%</strong> (Médio).<br><br>Dados fornecidos por <strong>CENSO</strong>.';
-                else desc.innerHTML = 'A taxa de abandono escolar variou de <strong>2.04%</strong> para <strong>1.1%</strong> (Fundamental) e de <strong>3.08%</strong> para <strong>3.16%</strong> (Médio).<br><br>Dados fornecidos por <strong>CENSO</strong>.';
+            const newData = dataSource[this.value];
+            if(newData) {
+                chart.data.labels = newData.labels;
+                chart.data.datasets = newData.datasets;
+                chart.update();
+                updateDescription(this, this.value); // Atualiza texto se necessário
             }
         });
     }
 }
 
-function createMatriculasChart() {
-    const ctx = document.getElementById('chartMatriculas').getContext('2d');
-    let chart = new Chart(ctx, {
-        type: 'bar',
-        data: { labels: matriculasData['infantil'].labels, datasets: matriculasData['infantil'].datasets },
-        plugins: [{
-            id: 'matriculasLabels',
-            afterDatasetsDraw(chart) {
-                const { ctx } = chart;
-                ctx.save();
-                chart.data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    if (!meta.hidden) {
-                        meta.data.forEach((element, index) => {
-                            const data = dataset.data[index];
-                            if(data > 0) { ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(data.toFixed(1) + '%', element.x, element.y - 5); }
-                        });
-                    }
-                });
-                ctx.restore();
-            }
-        }],
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#CCC', font: {size: 11} } }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', titleColor: '#FDC806' } },
-            scales: { x: { grid: { display: false }, ticks: { color: '#AAA' } }, y: { display: true, beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false }, ticks: { color: '#888', display: true } } }
-        }
-    });
-    const filter = document.getElementById('filterMatriculasType');
-    if(filter) {
-        filter.addEventListener('change', function() {
-            const tipo = this.value;
-            const newData = matriculasData[tipo];
-            chart.data.labels = newData.labels;
-            chart.data.datasets = newData.datasets;
-            chart.update();
-            const desc = this.closest('.sebrae-info').querySelector('.info-description');
-            if(desc) {
-                if(tipo === 'infantil') desc.innerHTML = `Em São João De Meriti, em 2024, no âmbito de <strong>Educação Infantil</strong>, a modalidade <strong>Pré-escola</strong> representa <strong>70.8%</strong> do total, somando <strong>9,476</strong> matrículas.<br><br>Esta visualização apresenta a distribuição relativa das matrículas em Educação Infantil em São João De Meriti ao longo dos anos. Ela permite comparar a participação de cada modalidade de ensino e identificar qual delas concentra a maior proporção de estudantes.<br>Dados fornecidos por <strong>CENSO - Conjunto de Dados Estatísticos Detalhados sobre a População</strong>.`;
-                else desc.innerHTML = `Em São João De Meriti, em 2024, no âmbito de <strong>Ensino Fundamental</strong>, a modalidade <strong>Anos Iniciais</strong> representa <strong>58.5%</strong> do total, somando <strong>28,993</strong> matrículas.<br><br>Esta visualização apresenta a distribuição relativa das matrículas em Ensino Fundamental em São João De Meriti ao longo dos anos. Ela permite comparar a participação de cada modalidade de ensino e identificar qual delas concentra a maior proporção de estudantes.<br>Dados fornecidos por <strong>CENSO - Conjunto de Dados Estatísticos Detalhados sobre a População</strong>.`;
-            }
-        });
-    }
-}
+function createEnemChart(canvasId, yearId, catId) {
+    const ctx = document.getElementById(canvasId);
+    if(!ctx) return;
 
-function createEnemBarChart(canvasId, yearId, catId) {
-    const ctx = document.getElementById(canvasId).getContext('2d');
-    let chart = new Chart(ctx, {
+    const chart = new Chart(ctx, {
         type: 'bar',
-        data: { labels: ['Matemática', 'Linguagens', 'Humanas', 'Sociais'], datasets: enemFullData["2023"]["genero"] },
-        plugins: [{
-            id: 'dataLabelsPlugin',
-            afterDatasetsDraw(chart) {
-                const { ctx } = chart;
-                ctx.save();
-                chart.data.datasets.forEach((dataset, i) => {
-                    const meta = chart.getDatasetMeta(i);
-                    if (!meta.hidden) {
-                        meta.data.forEach((element, index) => {
-                            const data = dataset.data[index];
-                            if(data) { ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(data, element.x, element.y - 3); }
-                        });
-                    }
-                });
-                ctx.restore();
-            }
-        }],
+        data: { labels: ['Matemática', 'Linguagens', 'Humanas', 'Sociais'], datasets: DB.enem["2023"]["genero"] },
+        plugins: [createLabelPlugin((v) => v)],
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#CCC' } }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', titleColor: '#FDC806' } },
-            scales: { x: { grid: { display: false }, ticks: { color: '#AAA' } }, y: { display: true, beginAtZero: true, grace: '10%', grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false }, ticks: { color: '#888', display: true } } }
+            plugins: { legend: { labels: { color: COLORS.gray } } },
+            scales: { x: { grid: { display: false } }, y: { display: true, grace: '10%' } }
         }
     });
+
     const update = () => {
-        const yearEl = document.getElementById(yearId);
-        const catEl = document.getElementById(catId);
-        if(!yearEl || !catEl) return;
-        const y = yearEl.value;
-        const c = catEl.value;
-        const data = (enemFullData[y] && enemFullData[y][c]) ? enemFullData[y][c] : enemFullData["2023"][c];
+        const y = document.getElementById(yearId)?.value || "2023";
+        const c = document.getElementById(catId)?.value || "genero";
+        const data = DB.enem[y] && DB.enem[y][c] ? DB.enem[y][c] : DB.enem["2023"][c];
         chart.data.datasets = data;
         chart.update();
     };
-    const ySelect = document.getElementById(yearId);
-    const cSelect = document.getElementById(catId);
-    if(ySelect) ySelect.addEventListener('change', update);
-    if(cSelect) cSelect.addEventListener('change', update);
+
+    document.getElementById(yearId)?.addEventListener('change', update);
+    document.getElementById(catId)?.addEventListener('change', update);
 }
 
-function createComparativoLineChart(canvasId, checkboxClass) {
-    const ctx = document.getElementById(canvasId).getContext('2d');
-    const dataClone = JSON.parse(JSON.stringify(compData));
-    const datasets = Object.values(dataClone.datasets).map(ds => ({...ds, tension: 0.4}));
-    let chart = new Chart(ctx, {
+function createLineComparison(canvasId, checkboxSelector) {
+    const ctx = document.getElementById(canvasId);
+    if(!ctx) return;
+
+    const chart = new Chart(ctx, {
         type: 'line',
-        data: { labels: dataClone.labels, datasets: datasets },
+        data: { labels: DB.comparativo.labels, datasets: DB.comparativo.datasets.map(d => ({...d, tension: 0.4})) },
         options: {
-            responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-            plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.9)', titleColor: '#FDC806' } },
-            scales: { x: { grid: { display: false }, ticks: { color: '#888' } }, y: { grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#888' } } }
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { display: false } },
+            scales: { x: { grid: { display: false } } }
         }
     });
-    const checkboxes = document.querySelectorAll(checkboxClass);
-    if(checkboxes.length > 0) {
-        checkboxes.forEach(box => {
-            box.addEventListener('change', (e) => {
-                const label = e.target.value;
-                const ds = chart.data.datasets.find(d => d.label.includes(label) || (label === 'São João De Meriti' && d.label === 'São João De Meriti'));
-                if(ds) {
-                    const idx = chart.data.datasets.indexOf(ds);
-                    chart.setDatasetVisibility(idx, e.target.checked);
-                    chart.update();
-                }
-            });
+
+    document.querySelectorAll(checkboxSelector).forEach(box => {
+        box.addEventListener('change', (e) => {
+            const ds = chart.data.datasets.find(d => d.label === e.target.value);
+            if(ds) {
+                const idx = chart.data.datasets.indexOf(ds);
+                chart.setDatasetVisibility(idx, e.target.checked);
+                chart.update();
+            }
         });
-    }
+    });
 }
 
-/* --- UTILITÁRIOS --- */
+// --- UTILITÁRIOS VISUAIS ---
+
+function updateDescription(element, value) {
+    // Lógica simples para trocar texto descritivo baseado no filtro
+    // Pode ser expandida conforme necessidade
+    const desc = element.closest('.sebrae-info')?.querySelector('.info-description');
+    if(!desc) return;
+    
+    // Exemplo genérico de feedback visual
+    // desc.style.opacity = 0.5; setTimeout(() => desc.style.opacity = 1, 300);
+}
+
 function initScrollAnimation() {
     const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) { entry.target.style.opacity = 1; entry.target.style.transform = 'translateY(0)'; } });
+        entries.forEach(entry => { 
+            if (entry.isIntersecting) { 
+                entry.target.style.opacity = 1; 
+                entry.target.style.transform = 'translateY(0)'; 
+            } 
+        });
     });
-    document.querySelectorAll('.section-title, .hero-content').forEach(el => { el.style.opacity = 0; el.style.transform = 'translateY(20px)'; el.style.transition = 'all 0.6s ease-out'; observer.observe(el); });
+    document.querySelectorAll('.section-title, .hero-content').forEach(el => { 
+        el.style.opacity = 0; 
+        el.style.transform = 'translateY(20px)'; 
+        el.style.transition = 'all 0.6s ease-out'; 
+        observer.observe(el); 
+    });
 }
 
 function initKpiCounters() {
-    const counters = document.querySelectorAll('.count-up');
-    const speed = 500; 
-    counters.forEach(counter => {
-        const targetAttr = counter.getAttribute('data-target');
-        if (!targetAttr) return;
-        const target = +targetAttr;
+    document.querySelectorAll('.count-up').forEach(counter => {
+        const target = +counter.getAttribute('data-target');
         const updateCount = () => {
-            const currentText = counter.innerText.replace(/\./g, '');
-            const count = +currentText;
-            const inc = Math.max(1, Math.ceil(target / speed));
-            if (count < target) {
-                counter.innerText = (count + inc).toLocaleString('pt-BR');
-                setTimeout(updateCount, 20); 
+            const current = +counter.innerText.replace(/\./g, '');
+            const inc = Math.max(1, Math.ceil(target / 100));
+            if (current < target) {
+                counter.innerText = (current + inc).toLocaleString('pt-BR');
+                requestAnimationFrame(updateCount);
             } else {
                 counter.innerText = target.toLocaleString('pt-BR');
             }
@@ -369,3 +323,30 @@ function initKpiCounters() {
         updateCount();
     });
 }
+
+/* =======================================================================
+   EDUCACAO.JS - CORRIGIDO
+   ======================================================================= */
+
+/* ... (Mantenha todo o código de CONFIGURAÇÃO, DADOS e INICIALIZAÇÃO igual estava antes) ... */
+
+/* --- COLE ISSO NO FINAL DO SEU ARQUIVO EDUCACAO.JS (FORA DE OUTRAS FUNÇÕES) --- */
+
+/* FUNÇÃO DO MENU MOBILE (Global) */
+function toggleMenu() {
+    const nav = document.getElementById('navMenu');
+    if (nav) {
+        nav.classList.toggle('active'); // Abre/Fecha o menu
+    }
+}
+
+// Fecha o menu automaticamente ao clicar em um link
+document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('.nav-menu a');
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            const nav = document.getElementById('navMenu');
+            if (nav) nav.classList.remove('active');
+        });
+    });
+});
