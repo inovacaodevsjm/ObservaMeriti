@@ -20,82 +20,133 @@
     100% { background-position: 0% 50%; }
 }
 
-/* Header Fixo */
+/* =======================================================================
+   HEADER FIXO (TRAVADO EM 130PX)
+   ======================================================================= */
 header {
   background-color: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(10px); /* Efeito de vidro fosco */
-  height: 130px;
+  backdrop-filter: blur(10px);
   
-  /* Fixação no topo */
-  position: fixed;   
-  top: 4px; /* Respeita a altura da linha neon */
-  left: 0;           
-  width: 100%;       
-  z-index: 1000; /* Garante sobreposição ao conteúdo */
+  /* TRAVA A ALTURA DA FAIXA PRETA */
+  height: 130px !important;       /* Força a altura exata */
+  max-height: 130px !important;   /* Impede que cresça */
+  overflow: visible;              /* Permite que a logo "vaze" se for maior, sem esticar a faixa */
   
-  border-bottom: none; 
+  /* REMOVE ESPAÇAMENTOS EXTRAS */
+  padding: 0;
+  margin: 0;
+  border-bottom: none;
+  
+  /* POSICIONAMENTO */
+  position: fixed;
+  top: 4px;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  
+  /* ALINHAMENTO */
   display: flex;
-  align-items: center;
+  align-items: center; 
 }
 
+/* O container interno também precisa respeitar a altura */
 .header-flex {
+    height: 100%;       /* Ocupa exatamente os 130px */
+    max-height: 100%;
     display: flex;
-    justify-content: space-between; /* Mantém logos nas pontas */
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     max-width: 1280px;
     margin: 0 auto;
-    
-    /* ADICIONE ISSO: */
-    position: relative; /* Permite centralizar o filho (menu) */
+    position: relative;
 }
 
-/* Logos */
-.logo-left img { height: 60px; width: auto; } /* Ajuste fino */
-.logo-right img { height: 75px; width: auto; }
+/* Logos (Mantém o tamanho que você quer, mas sem empurrar a faixa) */
+.logo-left img { 
+    height: 70px; 
+    width: auto; 
+    display: block; 
+}
 
+.logo-right img { 
+    height: 90px; /* Sua logo grande */
+    width: auto; 
+    display: block;
+    
+    /* TRUQUE: Se a logo for muito grande, ela não estica o header */
+    /* Ela vai ficar centralizada verticalmente */
+    max-height: 120px; 
+}
 
-/* MENU DESKTOP (Padrão) */
+/* Menu Desktop */
 .nav-menu ul {
   display: flex;
   gap: 30px;
   list-style: none;
-  padding: 0;
-  margin: 0;
+  margin: 0; padding: 0;
 }
+
 .nav-menu a {
-    color: #FFF; text-decoration: none; font-size: 18px; font-weight: 300;
+    color: #FFF; 
+    text-decoration: none; 
+    font-size: 18px; 
+    font-weight: 300;
     transition: color 0.3s;
+    
+    /* ADICIONE ISSO: Impede que o texto quebre de linha */
+    white-space: nowrap; 
 }
+
 .nav-menu a:hover { color: #FDC806; }
 
-/* BOTÃO HAMBURGUER (Escondido no Desktop) */
+/* Botão Mobile (Escondido no Desktop) */
 .mobile-menu-btn {
-    display: none; /* Só aparece no celular */
-    font-size: 30px; color: #FFF; background: none; border: none; cursor: pointer;
+    display: none;
+    font-size: 28px;
+    color: #FFF;
+    background: none;
+    border: none;
+    cursor: pointer;
     z-index: 1002;
 }
 
-/* --- 2. HERO SECTION --- */
+
+/* --- 5. HERO SECTION --- */
 .hero {
   position: relative;
-  min-height: 500px;
-  display: flex; align-items: center; justify-content: center; text-align: center;
-  margin-top: 0; 
-  padding-top: 180px; /* Espaço para o header */
-  padding-bottom: 60px;
+  min-height: 600px;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  text-align: center;
+  margin-top: 0;
+  
+  padding-top: 200px; 
+  
+  /* MUDANÇA AQUI: Diminuí de 60px para 20px */
+  padding-bottom: 20px; 
+  
   background: 
-    linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.9)), /* Mais contraste */
+    linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.9)),
     url('../../assets/img/Imagem do Topo do site.png'); 
-  background-size: cover; background-position: center; background-repeat: no-repeat;
+  
+  background-size: cover;
+  background-position: center top; 
+  background-repeat: no-repeat;
 }
 
-/* Títulos do Hero */
-.hero h1 { font-size: 48px; line-height: 1.1; margin-bottom: 20px; }
-.hero p { font-size: 18px; max-width: 800px; margin: 0 auto; line-height: 1.6; }
-
 /* --- 3. SEÇÃO DE KPIS (PANORAMA) --- */
-.panorama-section { padding: 40px 0 60px 0; position: relative; z-index: 2; }
+.panorama-section {
+    /* MUDANÇA AQUI: O primeiro valor (padding-top) foi para 0 */
+    padding: 0 0 60px 0;
+    margin-top: -20px;
+    position: relative;
+    z-index: 2;
+    
+    /* Opcional: Margem negativa se quiser subir AINDA mais */
+    /* margin-top: -20px; */ 
+}
 
 .kpi-grid-centered {
     display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
@@ -211,13 +262,73 @@ header {
     .kpi-grid-centered { gap: 15px; }
 }
 
-@media (min-width: 901px) {
-  .nav-menu {
-    position: absolute;        /* Solta o menu */
-    left: 50%;                 /* Manda para o meio */
-    transform: translateX(-50%); /* Ajusta o eixo exato */
-    white-space: nowrap;       /* Garante que não quebre linha */
-  }
+/* =======================================================================
+   RESPONSIVIDADE - MOBILE (IGUAL EDUCAÇÃO)
+   ======================================================================= */
+@media (max-width: 900px) {
+    
+    /* 1. Altura do Header (Fundo Preto do Topo) */
+    header {
+        height: 90px; /* Garante que fique fininho igual ao da educação */
+        padding: 0 15px;
+    }
+
+    /* Ajuste dos Logos */
+    .logo-left img { height: 45px; } /* Logo menor */
+    .logo-right { display: none; }   /* Esconde o logo da direita */
+
+    /* 2. Botão do Menu */
+    .mobile-menu-btn {
+        display: block;
+        position: absolute;
+        right: 25px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* 3. O MENU PRETO LATERAL (A "Parte Preta") */
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        left: auto;       /* Reseta alinhamento esquerdo */
+        right: -100%;     /* Começa escondido na direita */
+        
+        /* AQUI ESTÁ O SEGREDO DO TAMANHO */
+        width: 70%;       /* Ocupa 70% da tela (igual educação) */
+        height: 100vh;    /* Altura total */
+        
+        background: rgba(0, 0, 0, 0.98); /* Fundo bem escuro */
+        backdrop-filter: blur(15px);
+        
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 100px; /* Espaço para não ficar em cima do X */
+        
+        transition: right 0.4s ease; /* Animação suave */
+        
+        /* Garante que fique acima de tudo */
+        z-index: 1005; 
+        border-left: 1px solid rgba(255,255,255,0.1);
+        box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+    }
+
+    /* Quando o menu abre */
+    .nav-menu.active {
+        right: 0;
+    }
+
+    /* Itens do Menu */
+    .nav-menu ul {
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .nav-menu a {
+        font-size: 18px;
+        padding: 10px;
+        display: block;
+    }
 }
 
 /* MOBILE (Até 768px) */
@@ -226,7 +337,10 @@ header {
     /* Header e Logos */
     header { height: 90px; padding: 0 15px; }
     .logo-left img { height: 45px; }
-    .logo-right img { height: 60px; }
+    .logo-right {
+        display: none;
+    }
+
 
     .mobile-menu-btn { 
         display: block; /* Faz aparecer */
@@ -291,6 +405,7 @@ header {
     .hero { padding-top: 140px; min-height: 400px; }
     .hero h1 { font-size: 32px; }
     .hero p { font-size: 15px; padding: 0 10px; }
+
 
     /* KPIs */
     .kpi-card { 

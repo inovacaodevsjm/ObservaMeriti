@@ -1,6 +1,6 @@
 /* =======================================================================
    SCRIPT.JS - VERSÃO FINAL OTIMIZADA
-   Descrição: Controla API IBGE, Gráficos (Chart.js), Loaders e Slider.
+   Descrição: Controla API IBGE, Gráficos (Chart.js), Loaders, Slider e Menu.
    ======================================================================= */
 
 // --- 1. CONFIGURAÇÃO E DADOS ---
@@ -25,19 +25,43 @@ const COLORS = {
 // --- 2. INICIALIZAÇÃO ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Inicia animações visuais (Scroll e Contadores)
+    // 1. Inicia componentes visuais
+    initMobileMenu();       // <--- NOVO: Ativa o Menu Mobile
     initScrollAnimation();
     initCounterAnimation(); 
     
     // 2. Inicia o sistema principal (API + Loaders + Gráficos)
     initAppSystem();
     
-    // 3. Inicia componentes interativos
+    // 3. Inicia slider
     initSlider();
 });
 
 /* =======================================================================
-   3. SISTEMA PRINCIPAL (API + LOADERS)
+   3. MENU MOBILE (IGUAL EDUCAÇÃO)
+   ======================================================================= */
+
+function initMobileMenu() {
+    // Define a função globalmente para o onclick="toggleMenu()" do HTML funcionar
+    window.toggleMenu = function() {
+        const nav = document.getElementById('navMenu');
+        if (nav) {
+            nav.classList.toggle('active');
+        }
+    };
+
+    // (Opcional) Fecha o menu automaticamente ao clicar em um link
+    const links = document.querySelectorAll('.nav-menu a');
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            const nav = document.getElementById('navMenu');
+            if (nav) nav.classList.remove('active');
+        });
+    });
+}
+
+/* =======================================================================
+   4. SISTEMA PRINCIPAL (API + LOADERS)
    ======================================================================= */
 
 async function initAppSystem() {
@@ -71,7 +95,7 @@ function setupLoaderObserver(cards) {
                 const loader = card.querySelector('.loader-container');
                 observer.unobserve(card);
 
-                // Delay estético (3s) para mostrar a animação tecnológica
+                // Delay estético (2s) para mostrar a animação tecnológica
                 setTimeout(() => {
                     if(loader) loader.style.opacity = '0';
                     card.classList.remove('is-loading');
@@ -85,7 +109,7 @@ function setupLoaderObserver(cards) {
                         initAllCharts(); 
                         chartsInitialized = true;
                     }
-                }, 3000); 
+                }, 2000); 
             }
         });
     }, { threshold: 0.2 });
@@ -94,7 +118,7 @@ function setupLoaderObserver(cards) {
 }
 
 /* =======================================================================
-   4. API IBGE (CONEXÃO REAL)
+   5. API IBGE (CONEXÃO REAL)
    ======================================================================= */
 
 async function fetchIBGEData() {
@@ -138,7 +162,7 @@ function updateKpiNumbers() {
 }
 
 /* =======================================================================
-   5. GRÁFICOS (CHART.JS)
+   6. GRÁFICOS (CHART.JS)
    ======================================================================= */
 
 function initAllCharts() {
@@ -252,7 +276,7 @@ function createGradient(context, color) {
 }
 
 /* =======================================================================
-   6. INTERATIVIDADE (SLIDER, SCROLL, CONTADORES)
+   7. INTERATIVIDADE (SLIDER, SCROLL, CONTADORES)
    ======================================================================= */
 
 // Slider Horizontal
