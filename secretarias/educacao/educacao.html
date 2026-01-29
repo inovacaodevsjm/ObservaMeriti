@@ -6,12 +6,13 @@
     <title>SJM - Secretaria de Educação</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <link rel="stylesheet" href="../../style.css">
-    
     <link rel="stylesheet" href="educacao.css">
-    
     <script src="educacao.js" defer></script>
 </head>
 <body>
@@ -23,8 +24,13 @@
             
             <div class="logo-left">
                 <a href="../../index.html">
-                    <img src="../../assets/img/logo-horizontal-white.png" alt="Prefeitura SJM">
+                    <img class="img-dark-theme" src="../../assets/img/logo-horizontal-white.png" alt="Prefeitura SJM">
+                    <img class="img-light-theme" src="../../assets/img/logo-horizontal-colorida.png" alt="Prefeitura SJM Light">
                 </a>
+
+                <button id="theme-toggle" class="theme-btn" aria-label="Alternar Tema">
+                    <i class="fas fa-sun"></i>
+                </button>
             </div>
 
             <button class="mobile-menu-btn" onclick="toggleMenu()"> ☰ </button>
@@ -40,7 +46,9 @@
                 </ul>
             </nav>
             <div class="logo-right">
-                <img src="../../assets/img/logo-sjm-box.png" alt="SJM Logo">
+                <img class="img-dark-theme" src="../../assets/img/logo-horizontal-white.png" alt="Prefeitura SJM">
+                <img class="img-light-theme" src="../../assets/img/logo-vertical-colorida.png" alt="Prefeitura SJM Light">
+                
             </div>
 
         </div>

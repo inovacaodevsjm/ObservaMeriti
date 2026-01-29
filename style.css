@@ -1,70 +1,99 @@
 /* =======================================================================
-   STYLE.CSS - VERSÃO FINAL OTIMIZADA
-   Descrição: Estilo unificado (Home + Educação) com correções de conflito.
+   STYLE.CSS - ORGANIZADO E CORRIGIDO
+   Descrição: Estrutura limpa: Variáveis > Base > Componentes > Mobile
    ======================================================================= */
 
-/* --- 1. VARIÁVEIS GLOBAIS --- */
+/* =======================================================================
+   1. CONFIGURAÇÃO E CORES (VARIÁVEIS)
+   ======================================================================= */
+/* =======================================================================
+   1. CONFIGURAÇÃO E CORES (VARIÁVEIS)
+   ======================================================================= */
 :root {
-  --bg-dark: #000000;
-  --bg-card: #141414;
-  --text-white: #FFFFFF;
-  --text-gray: #B0B0B0;
-  
-  /* Gradientes Oficiais SJM */
-  --grad-start: #009039; /* Verde */
-  --grad-mid: #FDC806;   /* Amarelo */
-  --grad-end: #0000A8;   /* Azul */
+    /* --- TEMA DARK (PADRÃO) --- */
+    --bg-body: #000000;
+    --bg-card: #141414;
+    --bg-header: rgba(0, 0, 0, 0.9);
+    --bg-menu: rgba(0, 0, 0, 0.98);
+    
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+    --border-color: rgba(255, 255, 255, 0.1);
+    
+    /* Cores da Marca (Fixas) */
+    --brand-green: #009039;
+    --brand-yellow: #FDC806;
+    --brand-blue: #0000A8;
+
+    /* --- AS LINHAS QUE FALTAVAM (CORREÇÃO) --- */
+    /* O gerador de bordas usa estes nomes específicos: */
+    --grad-start: #009039; 
+    --grad-mid: #FDC806;   
+    --grad-end: #0000A8;   
 }
 
-/* --- 2. RESET E BASE --- */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-white);
-  overflow-x: hidden; /* Evita rolagem horizontal indesejada */
-}
-
-.container {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 20px;
+/* --- TEMA WHITE (CLASSE .light-theme) --- */
+body.light-theme {
+    --bg-body: #F4F4F4;
+    --bg-card: #FFFFFF;
+    
+    /* Header e Menu Brancos */
+    --bg-header: rgba(255, 255, 255, 0.95);
+    --bg-menu: rgba(255, 255, 255, 0.98);
+    
+    --text-primary: #1A1A1A;
+    --text-secondary: #555555;
+    --border-color: rgba(0, 0, 0, 0.1);
 }
 
 /* =======================================================================
-   HEADER FIXO (TRAVADO EM 130PX)
+   2. RESET E BASE
    ======================================================================= */
-header {
-  background-color: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(10px);
-  
-  /* TRAVA A ALTURA DA FAIXA PRETA */
-  height: 130px !important;       /* Força a altura exata */
-  max-height: 130px !important;   /* Impede que cresça */
-  overflow: visible;              /* Permite que a logo "vaze" se for maior, sem esticar a faixa */
-  
-  /* REMOVE ESPAÇAMENTOS EXTRAS */
-  padding: 0;
-  margin: 0;
-  border-bottom: none;
-  
-  /* POSICIONAMENTO */
-  position: fixed;
-  top: 4px;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  
-  /* ALINHAMENTO */
-  display: flex;
-  align-items: center; 
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* O container interno também precisa respeitar a altura */
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* =======================================================================
+   3. CABEÇALHO (HEADER)
+   ======================================================================= */
+header {
+    background-color: var(--bg-header); /* Usa a variável para trocar de cor */
+    backdrop-filter: blur(10px);
+    
+    /* Trava a altura */
+    height: 130px !important;
+    max-height: 130px !important;
+    overflow: visible;
+    
+    /* Posicionamento Fixo */
+    position: fixed;
+    top: 4px; left: 0; width: 100%;
+    z-index: 1000;
+    
+    border-bottom: none;
+    display: flex; align-items: center;
+}
+
+/* Força Header Branco no Tema Light (Segurança Extra) */
+body.light-theme header {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
 .header-flex {
-    height: 100%;       /* Ocupa exatamente os 130px */
-    max-height: 100%;
+    height: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -74,280 +103,298 @@ header {
     position: relative;
 }
 
-/* Logos (Mantém o tamanho que você quer, mas sem empurrar a faixa) */
-.logo-left img { 
-    height: 70px; 
-    width: auto; 
-    display: block; 
+/* LOGOS E BOTÃO DE TEMA */
+.logo-left {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 15px;
 }
+
+.logo-left img { height: 70px; width: auto; display: block; }
 
 .logo-right img { 
-    height: 90px; /* Sua logo grande */
-    width: auto; 
-    display: block;
-    
-    /* TRUQUE: Se a logo for muito grande, ela não estica o header */
-    /* Ela vai ficar centralizada verticalmente */
-    max-height: 120px; 
+    height: 90px; width: auto; display: block; 
+    max-height: 120px; /* Evita esticar o header */
 }
 
-/* MENU DESKTOP (Padrão) */
+
+/* Controle de visibilidade das logos por tema */
+.img-light-theme { display: none !important; }
+body.light-theme .img-dark-theme { display: none !important; }
+body.light-theme .img-light-theme { display: block !important; }
+
+
+body.light-theme .logo-left img.img-light-theme {
+    /* O padrão costuma ser 45px ou 50px. 
+       Tente aumentar para 60px ou 65px até ficar visualmente igual a outra. */
+    height: 80px !important; 
+    
+    /* Se precisar ajustar a largura também (caso fique distorcida): */
+    width: auto !important;
+}
+
+/* BOTÃO TOGGLE (SOL/LUA) */
+.theme-btn {
+    position: relative;
+    width: 42px; height: 22px;
+    margin-top: 5px;
+    background: transparent;
+    border: 1px solid var(--brand-yellow); 
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.theme-btn i {
+    position: absolute;
+    top: 50%; left: 3px;
+    transform: translateY(-50%); 
+    font-size: 11px;
+    color: var(--brand-yellow);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    
+    display: flex; align-items: center; justify-content: center;
+    width: 16px; height: 16px;
+    background: rgba(253, 200, 6, 0.1);
+    border-radius: 50%;
+}
+
+.theme-btn:hover { background: rgba(253, 200, 6, 0.1); opacity: 0.8; }
+
+/* Estilo do Botão no Tema Light */
+body.light-theme .theme-btn {
+    border-color: #000000;
+    background-color: rgba(0,0,0,0.05);
+}
+body.light-theme .theme-btn i {
+    left: calc(100% - 19px); /* Desliza para direita */
+    color: #000000;
+    background: rgba(0, 0, 0, 0.1);
+}
+body.light-theme .theme-btn:hover { background: rgba(0, 0, 0, 0.05); }
+
+/* =======================================================================
+   4. MENU DE NAVEGAÇÃO (DESKTOP)
+   ======================================================================= */
 .nav-menu {
-    /* Truque para centralização absoluta perfeita */
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Garanta que a lista dentro não atrapalhe */
 .nav-menu ul {
-    display: flex;
-    gap: 30px;
-    list-style: none;
-    margin: 0; 
-    padding: 0;
+    display: flex; gap: 30px;
+    list-style: none; margin: 0; padding: 0;
 }
 
 .nav-menu a {
     color: #FFF; 
     text-decoration: none; 
-    font-size: 18px; 
-    font-weight: 300;
+    font-size: 18px; font-weight: 300;
     transition: color 0.3s;
-    
-    /* ADICIONE ISSO: Impede que o texto quebre de linha */
-    white-space: nowrap; 
+    white-space: nowrap;
 }
-
 .nav-menu a:hover { color: #FDC806; }
 
-/* BOTÃO HAMBURGUER (Escondido no Desktop) */
+/* Ajustes do Menu no Tema Light (Desktop) */
+body.light-theme .nav-menu a { 
+  color: #1A1A1A !important;
+  font-weight: 500 !important; }
+body.light-theme .nav-menu a:hover { color: var(--brand-green) !important; }
+body.light-theme .nav-menu, 
+body.light-theme .nav-menu ul,
+body.light-theme .nav-menu li {
+    background: transparent !important; /* Garante fundo limpo no desktop */
+}
+
+/* Botão Mobile (Escondido no Desktop) */
 .mobile-menu-btn {
-    display: none; /* Só aparece no celular */
+    display: none;
     font-size: 30px; color: #FFF; background: none; border: none; cursor: pointer;
     z-index: 1002;
 }
+body.light-theme .mobile-menu-btn { color: #1A1A1A !important; }
 
-/* --- 4. LINHA DE TOPO ANIMADA (NEON) --- */
+/* =======================================================================
+   5. SEÇÕES DA PÁGINA (HERO, GRÁFICOS, ETC)
+   ======================================================================= */
+
+/* LINHA NEON TOPO */
 .top-gradient-line {
-    height: 5px;
-    width: 100%;
-    /* Gradiente angulado */
+    height: 5px; width: 100%;
     background: linear-gradient(45deg, #009039, #FDC806, #0000A8, #009039);
     background-size: 300% 300%;
-    
-    position: fixed;
-    top: 0; left: 0;
-    z-index: 9999; /* Acima do header */
-    
+    position: fixed; top: 0; left: 0; z-index: 9999;
     animation: gradientFlow 6s ease infinite;
     box-shadow: 0 1px 10px rgba(0, 144, 57, 0.4);
 }
-
 @keyframes gradientFlow {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-/* --- 5. HERO SECTION --- */
+/* HERO SECTION */
 .hero {
   position: relative;
   min-height: 600px;
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  text-align: center;
-  margin-top: 0;
-  
-  padding-top: 200px; 
-  
-  /* MUDANÇA AQUI: Diminuí de 60px para 20px */
-  padding-bottom: 20px; 
-  
-  background: 
-    linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.9)),
-    url('../../assets/img/Imagem do Topo do site.png'); 
-  
-  background-size: cover;
-  background-position: center top; 
-  background-repeat: no-repeat;
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  padding-top: 200px; padding-bottom: 20px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.9)), url('../../assets/img/Imagem do Topo do site.png'); 
+  background-size: cover; background-position: center top; background-repeat: no-repeat;
 }
-
-.hero-content {
-  position: relative;
-  z-index: 10;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.hero h1 {
-  font-size: 56px;
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: 20px;
-}
-
-.hero p {
-  color: #DDD;
-  font-size: 18px;
-  max-width: 700px;
-  margin: 0 auto 60px auto;
-}
-
-/* Texto Gradiente Auxiliar */
+.hero h1 { font-size: 56px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
+.hero p { color: #DDD; font-size: 18px; max-width: 700px; margin: 0 auto 60px auto; }
 .text-gradient {
   background: linear-gradient(to right, #009039, #FDC806);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
   display: inline-block;
 }
 
-/* --- 6. KPI GRID (INDICADORES TOPO) --- */
+/* =======================================================================
+   AJUSTE DO HERO NO TEMA WHITE (Mudança de Imagem)
+   ======================================================================= */
+
+body.light-theme .hero {
+    /* 1. Troque a URL abaixo pela imagem clara que você quer usar */
+    background: 
+        /* Gradiente suave branco para misturar com o site claro */
+        linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(244,244,244,1)),
+        
+        /* SUA NOVA IMAGEM AQUI */
+        url('assets/img/Imagem\ do\ Topo\ do\ site\ 2.jpeg'); 
+    
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+
+body.light-theme .hero h1 {
+    /* Isso muda apenas a parte "Observatório de Dados" para Preto */
+    color: #000000 !important;
+    
+    /* Remove sombras escuras que podem atrapalhar a leitura no fundo claro */
+    text-shadow: none !important; 
+}
+
+/* Opcional: Se quiser garantir que o "São João de Meriti" continue brilhando */
+body.light-theme .hero .text-gradient {
+    background: linear-gradient(to right, #009039, #FDC806) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    
+    /* A MÁGICA: Borda preta finíssima em volta das letras */
+    -webkit-text-stroke: 0.5px #000000;
+}
+
+body.light-theme .hero p {
+    color: #333; /* Texto cinza escuro */
+}
+
+/* KPI GRID */
 .kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  width: 100%;
-  max-width: 900px; /* Levemente aumentado para respirar */
-  margin: -60px auto 80px auto; /* Margin negativa para sobrepor o Hero */
-  position: relative;
-  z-index: 20;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  width: 100%; max-width: 900px;
+  margin: -60px auto 80px auto; position: relative; z-index: 20;
 }
-
 .kpi-card {
-  padding: 25px;
-  background: rgba(20, 20, 20, 0.98);
-  border-radius: 12px;
-  /* Borda gradiente é aplicada via classe .card-gradient-border */
+  padding: 25px; background: rgba(20, 20, 20, 0.98); border-radius: 12px;
 }
-
 .kpi-number { font-size: 36px; font-weight: 700; margin-bottom: 5px; }
 .kpi-number.yellow { color: #FDC806; }
 .kpi-number.green { color: #009039; }
-
 .kpi-title { font-size: 15px; color: #FFF; margin-bottom: 8px; font-weight: 500; }
 .kpi-source { font-size: 11px; color: #888; text-transform: uppercase; }
 
-/* Borda Gradiente (Técnica Mask Composite) */
-.card-gradient-border {
-  position: relative;
-  background: var(--bg-card);
-  border-radius: 12px;
-  z-index: 1;
+
+/* =======================================================================
+   AJUSTE DOS KPIS NO TEMA WHITE
+   ======================================================================= */
+
+/* 2. Título (Era Branco -> Vira Preto) */
+body.light-theme .kpi-title {
+    color: #1A1A1A !important;
+    font-weight: 600; /* Um pouco mais de peso para leitura */
 }
 
+/* 3. Fonte de Apoio/Fonte (Era Cinza claro -> Vira Cinza Escuro) */
+body.light-theme .kpi-source {
+    color: #555555 !important; /* Cinza chumbo */
+    font-weight: 500;
+}
+
+/* 4. (Opcional) Ajuste da borda gradiente para combinar melhor */
+body.light-theme .card-gradient-border::before {
+    opacity: 0.7; /* Deixa a borda colorida um pouco mais suave no claro */
+}
+
+/* =======================================================================
+   ESTILO DOS CARDS NO TEMA WHITE (Fundo Branco Puro)
+   ======================================================================= */
+
+/* 1. Desliga o gradiente colorido */
+body.light-theme .card-gradient-border::before {
+    display: none !important;
+}
+
+/* 2. Aplica Borda Preta e Fundo TOTALMENTE BRANCO */
+body.light-theme .kpi-card,
+body.light-theme .painel-card,
+body.light-theme .analise-card,
+body.light-theme .sebrae-card {
+    /* Borda Preta Sólida */
+    border: 1px solid #000000 !important;
+    
+    /* MUDANÇA: Fundo Branco Puro (#FFFFFF) */
+    background: #FFFFFF !important; 
+    
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Sombra leve */
+}
+
+/* Borda Gradiente */
+.card-gradient-border { position: relative; background: var(--bg-card); border-radius: 12px; z-index: 1; }
 .card-gradient-border::before {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: 13px; 
-  padding: 1px; 
+  content: ""; position: absolute; inset: -1px; border-radius: 13px; padding: 1px; 
   background: linear-gradient(to right, var(--grad-start), var(--grad-mid)); 
-  
-  /* Máscara para deixar apenas a borda visível */
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  
-  /* Webkit para compatibilidade (Gera aviso amarelo no VSCode, é normal) */
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  
-  pointer-events: none;
-  z-index: -1;
+  mask-composite: exclude; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor;
+  pointer-events: none; z-index: -1;
 }
 
-/* --- 7. PAINÉIS INTERATIVOS (SLIDER) --- */
-.slider-container {
-  position: relative;
-  width: 100%;
-  padding: 0 60px;
-}
-
-.paineis-grid {
-  display: flex;
-  gap: 30px;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 10px 10px 50px 10px;
-  scrollbar-width: none; /* Firefox */
-}
-.paineis-grid::-webkit-scrollbar { display: none; } /* Chrome */
+/* PAINÉIS INTERATIVOS (SLIDER) */
+.slider-container { position: relative; width: 100%; padding: 0 60px; }
+.paineis-grid { display: flex; gap: 30px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 10px 50px 10px; scrollbar-width: none; }
+.paineis-grid::-webkit-scrollbar { display: none; }
 
 .painel-card {
-  padding: 20px;
-  height: 450px; 
-  min-width: 320px;
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  position: relative;
+  padding: 20px; height: 450px; min-width: 320px; flex: 0 0 auto;
+  display: flex; flex-direction: column; justify-content: space-between; position: relative;
 }
-
 .painel-title { font-size: 20px; font-weight: 600; margin-bottom: 15px; }
-
-/* Setas do Slider */
-.slider-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: transparent;
-  border: 2px solid #009039;
-  color: #009039;
-  width: 50px; height: 50px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 20;
-}
-.slider-arrow:hover { background: #009039; color: #FFF; box-shadow: 0 0 15px rgba(0,144,57,0.6); }
-.slider-arrow.left { left: 0; }
-.slider-arrow.right { right: 0; }
-.slider-arrow svg { width: 24px; height: 24px; stroke-width: 3; }
-
-/* Botão Flutuante do Painel */
 .btn-painel {
-  background-color: #00C748;
-  color: white;
-  padding: 10px 24px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 14px;
-  text-transform: uppercase;
-  position: absolute;
-  bottom: -20px; 
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-  white-space: nowrap;
-  transition: background 0.3s;
+  background-color: #00C748; color: white; padding: 10px 24px; border-radius: 50px;
+  text-decoration: none; font-weight: 600; font-size: 14px; text-transform: uppercase;
+  position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+  z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.5); white-space: nowrap; transition: background 0.3s;
 }
 .btn-painel:hover { background-color: #00e050; }
 
-
-/* --- 8. SEÇÃO DE ANÁLISE DE DADOS (ESTILO EDUCAÇÃO) --- */
-/* Unificado: As classes 'analise-card' e 'sebrae-card' foram harmonizadas */
-
-.section-title {
-  text-align: center;
-  font-size: 42px;
-  font-weight: 700;
-  margin: 100px 0 50px 0;
+/* Setas */
+.slider-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: transparent; border: 2px solid #009039; color: #009039;
+  width: 50px; height: 50px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.3s ease; z-index: 20;
 }
+.slider-arrow:hover { background: #009039; color: #FFF; box-shadow: 0 0 15px rgba(0,144,57,0.6); }
+.slider-arrow.left { left: 0; } .slider-arrow.right { right: 0; }
 
-.sebrae-list {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-/* O Card Principal de Análise */
-/* Aplica-se tanto para .analise-card quanto .sebrae-card para garantir consistência */
+/* SEÇÃO DE ANÁLISE (CARDS GRANDES) */
 .analise-card, .sebrae-card {
     display: flex;
     flex-direction: row;
@@ -356,419 +403,231 @@ header {
     gap: 50px;
     padding: 40px;
     min-height: 440px;
-    margin-bottom: 0; /* Controlado pelo gap do pai */
     
-    /* Visual Vidro */
+    /* MUDANÇA AQUI: Adicione margem inferior para desgrudar um do outro */
+    margin-bottom: 40px !important; 
+    
     background: rgba(30, 32, 36, 0.6);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Coluna Esquerda (Informações) */
-.analise-content, .sebrae-info {
-    flex: 1;
-    min-width: 350px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    text-align: left;
-}
+.analise-content, .sebrae-info { flex: 1; min-width: 350px; display: flex; flex-direction: column; text-align: left; }
 
-.info-title, .analise-content h3 {
-    font-size: 22px;
-    font-weight: 700;
-    color: #FFF;
-    margin-bottom: 10px;
-    line-height: 1.2;
-}
+.info-title { font-size: 22px; font-weight: 700; color: #FFF; margin-bottom: 10px; }
 
-/* Tags de Segmentação */
 .tag-segmentacao {
-    background-color: #333;
-    color: #FFF;
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    display: inline-block;
-    margin-bottom: 20px;
-    border: 1px solid #555;
-    width: fit-content;
+    background-color: #333; color: #FFF; padding: 6px 16px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; border: 1px solid #555; width: fit-content;
 }
+.info-description { color: var(--text-gray); font-size: 15px; line-height: 1.8; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
 
-/* Descrição e Textos */
-.info-description, .analise-content p {
-    color: var(--text-gray);
-    font-size: 15px;
-    line-height: 1.8;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.info-description strong { color: #fff; font-weight: 600; }
-
-/* Filtros (Selects) */
-.filters-row {
-    display: flex;
-    gap: 15px;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.info-segmentation {
-    flex: 1;
-    width: 100%;
-}
-
-.info-segmentation label {
-    color: #888;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
-    display: block;
-    font-weight: 600;
-}
-
-.chart-filter {
-    background: rgba(253, 200, 6, 0.05);
-    border: 1px solid rgba(253, 200, 6, 0.2);
-    color: #FDC806;
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 11px;
-    border-radius: 6px;
-    font-weight: 500;
-    outline: none;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.chart-filter option { background: #1E2024; color: #FFF; }
-.chart-filter:hover { background: rgba(253, 200, 6, 0.1); border-color: rgba(253, 200, 6, 0.5); }
-
-/* Coluna Direita (Gráfico) */
 .analise-chart, .sebrae-chart-wrapper {
-    flex: 1.5;
-    height: 350px;
-    width: 100%;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    /* Fundo sutil para o gráfico */
-    background: rgba(0,0,0,0.2);
-    border-radius: 12px;
+    flex: 1.5; height: 350px; width: 100%; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.2); border-radius: 12px;
 }
-
 .sebrae-chart-wrapper canvas { max-width: 100%; max-height: 100%; }
 
+/* =======================================================================
+   REFINAMENTO INTERNO DA ANÁLISE DE DADOS (TEMA WHITE)
+   ======================================================================= */
 
-/* --- 9. LOADERS (ANIMAÇÃO DE CARREGAMENTO) --- */
+/* 1. Títulos dos Gráficos (Preto Forte) */
+body.light-theme .info-title,
+body.light-theme .analise-content h3 {
+    color: #000000 !important;
+    font-weight: 700;
+}
+
+/* 2. Descrição e Linhas (Cinza Escuro) */
+body.light-theme .info-description,
+body.light-theme .analise-content p {
+    color: #333333 !important; /* Leitura confortável */
+    border-top: 1px solid rgba(0,0,0,0.1) !important; /* Linha de separação sutil */
+}
+
+body.light-theme .info-description strong {
+    color: #009039 !important; /* Destaque em verde escuro */
+}
+
+/* 3. Labels dos Filtros ("SELECIONE O ANO", etc) */
+body.light-theme .info-segmentation label {
+    color: #000000 !important;
+    font-weight: 700;
+    opacity: 0.7;
+}
+
+/* 4. O CRÍTICO: Os botões de Filtro (Selects) */
+/* Amarelo no branco não dá leitura. Vamos mudar para um estilo "Clean" */
+body.light-theme .chart-filter {
+    background-color: #F0F0F0 !important; /* Fundo cinza bem claro */
+    border: 1px solid #CCCCCC !important;  /* Borda cinza */
+    color: #1A1A1A !important;             /* Texto quase preto */
+}
+
+/* Hover no filtro (Fica verde ao passar o mouse) */
+body.light-theme .chart-filter:hover {
+    border-color: #009039 !important;
+    color: #009039 !important;
+    background-color: #FFFFFF !important;
+}
+
+/* 5. Fundo da área do gráfico (Onde fica o desenho) */
+body.light-theme .analise-chart,
+body.light-theme .sebrae-chart-wrapper {
+    /* Removemos o fundo escuro transparente e deixamos limpo */
+    background: transparent !important; 
+    
+    /* Opcional: Se quiser destacar a área do gráfico */
+    /* background: rgba(0,0,0,0.02) !important; */
+}
+
+/* FILTROS */
+.filters-row { display: flex; gap: 15px; width: 100%; margin-bottom: 20px; }
+.chart-filter {
+    background: rgba(253, 200, 6, 0.05); border: 1px solid rgba(253, 200, 6, 0.2);
+    color: #FDC806; width: 100%; padding: 10px 12px; font-size: 11px; border-radius: 6px;
+    font-weight: 500; outline: none; cursor: pointer; transition: all 0.2s;
+}
+.chart-filter option { background: #1E2024; color: #FFF; }
+
+/* LOADERS */
 .loader-container {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
-    background: rgba(20, 20, 20, 0.95);
-    z-index: 50;
-    border-radius: 12px;
-    transition: opacity 0.5s ease-out;
+    background: rgba(20, 20, 20, 0.95); z-index: 50; border-radius: 12px; transition: opacity 0.5s ease-out;
 }
-
 .tech-loader {
-    width: 80px; height: 80px;
-    border-radius: 50%;
-    border: 3px solid transparent;
-    border-top-color: #009039;
-    animation: spin 1.5s linear infinite;
-    box-shadow: 0 0 15px rgba(0, 144, 57, 0.4);
-    position: relative;
+    width: 80px; height: 80px; border-radius: 50%; border: 3px solid transparent; border-top-color: #009039;
+    animation: spin 1.5s linear infinite; box-shadow: 0 0 15px rgba(0, 144, 57, 0.4); position: relative;
 }
-
 .tech-loader::before {
-    content: ""; position: absolute;
-    top: 5px; left: 5px; right: 5px; bottom: 5px;
-    border-radius: 50%; border: 3px solid transparent;
-    border-top-color: #FDC806;
-    animation: spin 2.5s linear infinite reverse;
+    content: ""; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
+    border-radius: 50%; border: 3px solid transparent; border-top-color: #FDC806; animation: spin 2.5s linear infinite reverse;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.analise-card.is-loading .analise-content, .analise-card.is-loading .analise-chart { opacity: 0; }
+.analise-card.is-loaded .analise-content, .analise-card.is-loaded .analise-chart { opacity: 1; transition: opacity 0.8s ease-in; }
+
+/* =======================================================================
+   AJUSTE DO LOADER PARA O TEMA LIGHT (Visual Clean/Tecnológico)
+   ======================================================================= */
+
+/* 1. O Fundo do Loader (Overlay) */
+/* Sai o preto fosco, entra um branco translúcido limpo */
+body.light-theme .loader-container {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(0,0,0,0.05); /* Uma borda sutil para definir a área */
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+/* 2. O Anel Externo (Principal) */
+body.light-theme .tech-loader {
+    /* Muda de Verde Neon para o AZUL da marca (Fica mais sério/tech no branco) */
+    /* Se você tiver a variável --brand-blue definida, ele usará ela. Senão, usa o fallback #0056b3 */
+    border-top-color: var(--brand-blue, #0056b3) !important; 
+
+    /* Ajusta o "Brilho" (Glow) */
+    /* Removemos o brilho neon forte e trocamos por uma sombra azul suave e nítida */
+    box-shadow: 0 0 12px rgba(0, 86, 179, 0.25) !important; 
 }
 
-/* Estados de visibilidade */
-.analise-card.is-loading .analise-content,
-.analise-card.is-loading .analise-chart,
-.sebrae-card.is-loading .sebrae-info,
-.sebrae-card.is-loading .sebrae-chart-wrapper {
-    opacity: 0;
+/* 3. O Anel Interno (Secundário) */
+body.light-theme .tech-loader::before {
+    /* Muda de Amarelo para o VERDE da marca para criar contraste com o azul */
+    border-top-color: var(--brand-green, #009039) !important;
 }
 
-.analise-card.is-loaded .analise-content,
-.analise-card.is-loaded .analise-chart,
-.sebrae-card.is-loaded .sebrae-info,
-.sebrae-card.is-loaded .sebrae-chart-wrapper {
-    opacity: 1;
-    transition: opacity 0.8s ease-in;
-    animation: fadeUpContent 0.8s ease-out;
-}
-
-@keyframes fadeUpContent {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* --- 10. RODAPÉ E BOTÕES --- */
-.btn-large-container { text-align: center; margin: 80px 0 100px 0; }
-.btn-large {
-    background-color: #009039; color: white;
-    font-size: 18px; font-weight: 700;
-    padding: 18px 50px; border-radius: 8px;
-    text-decoration: none; transition: background 0.3s;
-}
-.btn-large:hover { background-color: #007a30; }
-
-footer {
-    background-color: white; color: #111;
-    padding: 80px 0; border-top: 4px solid var(--grad-start);
-}
+/* RODAPÉ */
+footer { background-color: white; color: #111; padding: 80px 0; border-top: 4px solid var(--grad-start); }
 .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
 .footer-col h3 { font-size: 16px; font-weight: 700; margin-bottom: 25px; text-transform: uppercase; }
 .footer-col ul li { list-style: none; margin-bottom: 12px; }
-.footer-col a { color: #555; text-decoration: none; font-size: 14px; font-weight: 500; }
+.footer-col a { color: #555; text-decoration: none; font-size: 14px; }
 .footer-col a:hover { color: #009039; }
 
-/* Animações JS Classes */
-.js-scroll { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
-.js-scroll.visible { opacity: 1; transform: translateY(0); }
-
 /* =======================================================================
-   RESPONSIVIDADE - MOBILE (IGUAL EDUCAÇÃO)
+   6. RESPONSIVIDADE (MOBILE E TABLET)
    ======================================================================= */
+
+/* --- TABLET E MOBILE GERAL (Max 900px) --- */
 @media (max-width: 900px) {
     
-    /* 1. Altura do Header (Fundo Preto do Topo) */
-    header {
-        height: 90px; /* Garante que fique fininho igual ao da educação */
-        padding: 0 15px;
+    /* Header Compacto */
+    header { height: 90px !important; padding: 0 15px; }
+    
+    /* Logos Menores */
+    .logo-left { gap: 10px; }
+    .logo-left img { height: 45px; }
+    .logo-right { display: none; } /* Esconde logo direita no mobile */
+    
+    /* Ajuste Botão Tema */
+    .theme-btn { width: 38px; height: 20px; }
+    .theme-btn i { font-size: 10px; width: 14px; height: 14px; }
+    body.light-theme .theme-btn i { left: calc(100% - 17px); }
+
+    /* Exibe Botão Menu */
+    .mobile-menu-btn { 
+        display: block; 
+        position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
     }
 
-    /* Ajuste dos Logos */
-    .logo-left img { height: 45px; } /* Logo menor */
-    .logo-right { display: none; }   /* Esconde o logo da direita */
-
-    /* 2. Botão do Menu */
-    .mobile-menu-btn {
-        display: block;
-        position: absolute;
-        right: 25px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    /* 3. O MENU PRETO LATERAL (A "Parte Preta") */
+    /* MENU MOBILE (Estilo Gaveta Lateral) */
     .nav-menu {
-        position: fixed;
-        top: 0;
-        left: auto;       /* Reseta alinhamento esquerdo */
-        right: -100%;     /* Começa escondido na direita */
+        position: fixed !important;
+        top: 0; right: -100%; left: auto;
+        width: 70%; height: 100vh;
+        transform: none !important;
         
-        /* AQUI ESTÁ O SEGREDO DO TAMANHO */
-        width: 70%;       /* Ocupa 70% da tela (igual educação) */
-        height: 100vh;    /* Altura total */
+        background: rgba(0, 0, 0, 0.98) !important; /* Fundo Preto Sempre */
+        backdrop-filter: blur(15px) !important;
         
-        background: rgba(0, 0, 0, 0.98); /* Fundo bem escuro */
-        backdrop-filter: blur(15px);
-        
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 100px; /* Espaço para não ficar em cima do X */
-        
-        transition: right 0.4s ease; /* Animação suave */
-        
-        /* Garante que fique acima de tudo */
+        display: flex !important; flex-direction: column; align-items: center;
+        padding-top: 100px;
+        transition: right 0.4s ease;
         z-index: 1005; 
         border-left: 1px solid rgba(255,255,255,0.1);
         box-shadow: -10px 0 30px rgba(0,0,0,0.8);
     }
-
-    /* Quando o menu abre */
-    .nav-menu.active {
-        right: 0;
-    }
-
-    /* Itens do Menu */
-    .nav-menu ul {
-        flex-direction: column;
-        gap: 25px;
-    }
     
-    .nav-menu a {
-        font-size: 18px;
-        padding: 10px;
-        display: block;
-    }
-    .kpi-grid {
-        /* Muda de 4 colunas para APENAS 1 coluna */
-        display: grid; 
-        grid-template-columns: 1fr; 
-        
-        /* Ajustes de espaçamento */
-        gap: 15px;
-        width: 100%;
-        margin-top: 30px; /* Dá um respiro do Banner */
-        padding: 0 20px;  /* Garante que não cole nas bordas da tela */
-    }
-
-    .kpi-card {
-        width: 100%; /* Força o card a usar todo o espaço da coluna */
-        max-width: 100%;
-    }
-    /* 1. Ajuste do Container (Slider) */
-    .paineis-grid {
-        gap: 15px;               /* Diminui espaço entre cards */
-        padding: 10px 15px 40px; /* Ajusta respiro */
-    }
-
-    /* 2. O Card em si (Mais compacto) */
-    .painel-card {
-        min-width: 260px;       /* Reduz largura para caber em telas pequenas */
-        max-width: 85vw;        /* Garante que nunca ultrapasse 85% da tela */
-        height: auto;           /* ALTURA AUTOMÁTICA: O segredo para não cortar nada */
-        min-height: 300px;      /* Altura mínima menor */
-        padding: 15px;          /* Menos preenchimento interno */
-    }
-
-    /* 3. Título Menor */
-    .painel-title {
-        font-size: 16px;        /* Reduz fonte do título (era 20px) */
-        margin-bottom: 10px;
-    }
-
-    /* 4. Imagem Menor (Força a redução) */
-    .painel-card img {
-        max-height: 150px !important; /* Limita altura da imagem */
-        width: auto;
-        margin-bottom: 10px;
-    }
-
-    /* 5. Texto de apoio (Span) Menor */
-    .painel-card span {
-        font-size: 9px !important;    /* Texto bem pequeno e discreto */
-        margin-bottom: 5px !important;
-    }
+    /* Menu Aberto */
+    .nav-menu.active { right: 0; }
     
-    /* 6. Botão mais compacto */
-    .painel-card .btn-outline {
-        padding: 8px 16px;
-        font-size: 12px;
+    /* Lista Vertical */
+    .nav-menu ul { flex-direction: column; gap: 25px; }
+    .nav-menu a { font-size: 18px; padding: 10px; display: block; color: white !important; }
+
+    /* Ajuste Tema Claro no Mobile */
+    body.light-theme .nav-menu {
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-left: 1px solid rgba(0,0,0,0.1);
     }
+    body.light-theme .nav-menu a { color: #1A1A1A !important; }
+
+    /* Grid de KPIs (1 Coluna) */
+    .kpi-grid { grid-template-columns: 1fr; gap: 15px; margin-top: 30px; padding: 0 20px; }
+    .kpi-card { width: 100%; max-width: 100%; }
+
+    /* Slider Compacto */
+    .paineis-grid { gap: 15px; padding: 10px 15px 40px; }
+    .painel-card { min-width: 260px; max-width: 85vw; height: auto; min-height: 300px; padding: 15px; }
+    .painel-title { font-size: 16px; margin-bottom: 10px; }
+    .painel-card img { max-height: 150px !important; margin-bottom: 10px; }
+    
+    /* Cards de Análise */
+    .analise-card, .sebrae-card { flex-direction: column; padding: 20px; height: auto; gap: 30px; }
+    .analise-content, .sebrae-info { width: 100%; min-width: auto; }
+    .analise-chart, .sebrae-chart-wrapper { height: 250px; width: 100%; }
+    .filters-row { flex-direction: column; gap: 10px; }
 }
 
-/* MOBILE (Até 768px) */
+/* --- MOBILE PEQUENO (Max 768px) --- */
 @media (max-width: 768px) {
-    
- /* Header e Logos */
-    header { height: 90px; padding: 0 15px; }
-    .logo-left img { height: 45px; }
-    .logo-right {
-        display: none;
-    }
-
-    .mobile-menu-btn { 
-        display: block; /* Faz aparecer */
-        
-        position: absolute; /* O Segredo: Tira do fluxo para não empurrar nada */
-        right: 25px;        /* Cola 25px da borda direita */
-        top: 50%;           /* Posiciona no meio vertical do header */
-        transform: translateY(-50%); /* Centralização vertical exata */
-        
-        z-index: 1100;      /* Garante que fique acima de tudo */
-    }
-
-    /* Opcional: Se o botão ficar em cima da Logo Direita, podemos esconder a logo direita no celular */
-    .logo-right img {
-        display: none; /* Esconde o brasão direito no celular para dar espaço ao menu */
-        /* Se quiser manter a logo, apague essa linha 'display: none' */
-    }
-
-    /* Ajuste para centralizar a Logo Esquerda já que a direita sumiu */
-    .header-flex {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    
-        /* ADICIONE ESTA LINHA: */
-        position: relative; 
-}
-    
-    .nav-menu {
-        position: fixed;
-        top: 0;
-        left: auto;
-        transform: none;
-        right: -100%; /* Começa escondido fora da tela */
-        width: 70%;   /* Ocupa 70% da tela */
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.98);
-        border-left: 1px solid rgba(255,255,255,0.1);
-        padding-top: 100px;
-        transition: right 0.4s ease; /* Animação de deslize */
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        backdrop-filter: blur(15px);
-    }
-    
-    .nav-menu.active {
-        right: 0; /* Entra na tela */
-        box-shadow: -10px 0 30px rgba(0,0,0,0.8);
-    }
-    
-    .nav-menu ul {
-        flex-direction: column;
-        gap: 30px;
-        text-align: center;
-    }
-    
-    .nav-menu a { font-size: 18px; padding: 10px; display: block; }
-
-    /* Hero */
-    .hero { padding-top: 140px; min-height: 400px; }
+    .hero { padding-top: 140px; }
     .hero h1 { font-size: 32px; }
     .hero p { font-size: 15px; padding: 0 10px; }
-
-    /* KPIs */
-    .kpi-card { 
-        flex: 1 1 100%; /* Ocupa largura total no celular */
-        max-width: 100%; 
-    }
-
-    /* Gráficos e Cards */
-    .sebrae-card {
-        flex-direction: column; /* Empilha: Texto em cima, gráfico embaixo */
-        padding: 20px;
-        height: auto;
-    }
-
-    .sebrae-info { width: 100%; min-width: auto; margin-bottom: 20px; }
-    .info-title { font-size: 22px; text-align: center; }
-    .info-description { text-align: left; font-size: 13px; }
     
-    /* Filtros empilhados */
-    .filters-row { flex-direction: column; gap: 10px; }
-    .info-segmentation { width: 100%; }
-
-    /* Área do Gráfico */
-    .sebrae-chart-wrapper { height: 250px; flex: none; width: 100%; }
-
-    /* Ajuste de Texto Panorama */
-    .panorama-text { width: 100%; border-left: none; border-top: 4px solid #FDC806; border-radius: 12px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 30px; text-align: center; }
 }

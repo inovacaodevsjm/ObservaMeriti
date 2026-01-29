@@ -19,6 +19,9 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
+:root {
+    --brand-yellow: #FDC806; /* Amarelo da Marca */
+}
 
 /* =======================================================================
    HEADER FIXO (TRAVADO EM 130PX)
@@ -62,11 +65,45 @@ header {
     position: relative;
 }
 
+.header-right-controls {
+    margin-left: auto; /* Empurra para a direita se estiver flex */
+    /* Se o menu estiver no meio, pode precisar ajustar a ordem visual com 'order' */
+}
+
+/* Container que segura a Logo e o Botão */
+.logo-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px; /* Espaço entre a logo e o botão */
+}
+
+/* Força a Logo a ser o PRIMEIRO item */
+.logo-left a {
+    order: 1;
+}
+
+.logo-left .theme-btn {
+    margin-top: 5px; /* Desce um pouquinho para alinhar com o topo do texto da logo */
+}
+
+/* Força o Botão de Tema a ser o SEGUNDO item (lado direito da logo) */
+.logo-left #theme-toggle {
+    order: 2;
+    margin: 0; /* Remove margens antigas se tiver */
+}
+
 /* Logos (Mantém o tamanho que você quer, mas sem empurrar a faixa) */
 .logo-left img { 
     height: 70px; 
     width: auto; 
     display: block; 
+}
+
+/* Garante que a logo não estique */
+.logo-left a img {
+    display: block;
+    /* Se a logo estiver muito grande, limite aqui */
+    max-height: 90px; 
 }
 
 .logo-right img { 
@@ -149,8 +186,16 @@ header {
 }
 
 .kpi-grid-centered {
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
-    padding: 0 20px; width: 100%; max-width: 1200px; margin: 0 auto;
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+    
+    gap: 10px; /* <--- MUDE DE 20px PARA 10px */
+    
+    padding: 0 20px; 
+    width: 100%; 
+    max-width: 1200px; 
+    margin: 0 auto;
 }
 
 .kpi-card {
@@ -183,7 +228,7 @@ header {
 
 /* --- 4. ESTRUTURA DOS GRÁFICOS --- */
 .section-charts { margin-top: 50px; margin-bottom: 100px; }
-.sebrae-list { display: flex; flex-direction: column; gap: 40px; }
+.sebrae-list { display: flex; flex-direction: column; gap: 5px; }
 
 .sebrae-card {
     display: flex; flex-direction: row; align-items: stretch; justify-content: space-between;
@@ -237,6 +282,110 @@ header {
     border-radius: 50%; border: 3px solid transparent; border-top-color: #FDC806;
     animation: spin 2.5s linear infinite reverse;
 }
+
+/* =======================================================================
+   TEMA LIGHT - AJUSTES ESPECÍFICOS PARA EDUCAÇÃO
+   ======================================================================= */
+
+/* 1. Cards de KPIs e Gráficos no Tema Claro */
+body.light-theme .kpi-card,
+body.light-theme .sebrae-card, 
+body.light-theme .analise-card {
+    background: #FFFFFF !important;       /* Fundo Branco Puro */
+    border: 1px solid #000000 !important; /* Borda Preta Fina */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Sombra Leve */
+}
+
+/* 2. Títulos e Textos nos Cards */
+body.light-theme .kpi-value,
+body.light-theme .info-title,
+body.light-theme .sebrae-info h3 {
+    color: #000000 !important; /* Texto Preto */
+}
+
+body.light-theme .kpi-label,
+body.light-theme .info-description {
+    color: #333333 !important; /* Cinza Escuro para descrições */
+}
+
+/* 3. Filtros (Selects) */
+body.light-theme .chart-filter {
+    background-color: #F0F0F0 !important;
+    border: 1px solid #CCCCCC !important;
+    color: #1A1A1A !important;
+}
+
+/* 4. Loader Tecnológico (Versão Light) */
+body.light-theme .loader-container {
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+body.light-theme .tech-loader {
+    border-top-color: var(--brand-blue, #0056b3) !important;
+    box-shadow: 0 0 10px rgba(0, 86, 179, 0.2) !important;
+}
+
+/* 5. Ajuste da Logo Light (Se precisar aumentar) */
+body.light-theme .logo-left img.img-light-theme {
+    height: 80px !important; /* Ajuste conforme necessário */
+    width: auto !important;
+}
+
+/* =======================================================================
+   COR DO ÍCONE DO TEMA (CORREÇÃO FINAL)
+   ======================================================================= */
+
+/* O Botão de Tema "Suave" */
+.theme-btn {
+    width: 42px; height: 22px; /* Tamanho pequeno */
+    border-radius: 50px;
+    border: 1px solid var(--brand-yellow);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin-left: 0 !important;
+    margin-top: 5px !important;
+    margin-bottom: 0;
+    margin-right: 0;
+    
+    /* Importante para não quebrar o layout */
+    margin: 0; 
+}
+
+/* Efeito Hover (Passar o mouse) */
+.theme-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+/* AJUSTES PARA O TEMA CLARO (LIGHT MODE) */
+body.light-theme .theme-btn {
+    background: rgba(0, 0, 0, 0.05); /* Fundo cinza bem clarinho */
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #333; /* Ícone Escuro */
+}
+
+body.light-theme .theme-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* 1. Tema Escuro (Padrão): Ícone Branco */
+.theme-btn i {
+    color: var(--brand-yellow); /* <--- Cor do Sol */}
+
+
+/* 3. Borda do botão também precisa mudar */
+body.light-theme .theme-btn {
+    border-color: rgba(0,0,0,0.2) !important;
+}
+/* Ícone Preto (Lua) no Tema Claro */
+body.light-theme .theme-btn i {
+    color: #000000; /* <--- Cor da Lua */
+    left: calc(100% - 19px); /* Posição da Lua */
+    /* ... */
+}
+
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 .analise-card.is-loading .sebrae-info, .analise-card.is-loading .sebrae-chart-wrapper { opacity: 0; }

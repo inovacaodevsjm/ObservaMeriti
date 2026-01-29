@@ -22,19 +22,26 @@ const COLORS = {
     grid: 'rgba(255, 255, 255, 0.05)'
 };
 
+let chartInstances = []; // Lista para controlar os gráficos ativos
+
+
 // --- 2. INICIALIZAÇÃO ---
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Inicia componentes visuais
+    initThemeSystem();
     initMobileMenu();       // <--- NOVO: Ativa o Menu Mobile
     initScrollAnimation();
     initCounterAnimation(); 
     
-    // 2. Inicia o sistema principal (API + Loaders + Gráficos)
-    initAppSystem();
+    if (typeof initAppSystem === 'function') {
+        initAppSystem();
+    }
     
-    // 3. Inicia slider
-    initSlider();
+    // 5. Inicia Slider
+    if (typeof initSlider === 'function') {
+        initSlider();
+    }
 });
 
 /* =======================================================================
@@ -117,41 +124,50 @@ function setupLoaderObserver(cards) {
     cards.forEach(card => observer.observe(card));
 }
 
-/* =======================================================================
-   5. API IBGE (CONEXÃO REAL)
-   ======================================================================= */
-
+// --- INTEGRAÇÃO API IBGE (CORRIGIDA) ---
 async function fetchIBGEData() {
-    console.log("📡 Conectando ao IBGE...");
-    const codSJM = '3305109'; 
-
-    const urls = {
-        pop2022: `https://apisidra.ibge.gov.br/values/t/4714/n6/${codSJM}/v/93/p/2022?formato=json`,
-        pib: `https://apisidra.ibge.gov.br/values/t/5938/n6/${codSJM}/v/37/p/2021?formato=json`,
-        salario: `https://apisidra.ibge.gov.br/values/t/1685/n6/${codSJM}/v/2079/p/2021?formato=json`
-    };
+    // Código IBGE de São João de Meriti: 3305109
+    // Endereços oficiais da API de Agregados (Censo 2022 e PIB)
+    const urls = [
+        // 1. População (Censo 2022) - Variável 93 (População residente)
+        'https://servicodados.ibge.gov.br/api/v3/agregados/9605/periodos/2022/variaveis/93?localidades=N6[3305109]',
+        
+        // 2. PIB (Produto Interno Bruto) - Variável 37 (PIB a preços correntes)
+        'https://servicodados.ibge.gov.br/api/v3/agregados/5938/periodos/-1/variaveis/37?localidades=N6[3305109]'
+    ];
 
     try {
-        const [resPop, resPib, resSal] = await Promise.all([
-            fetch(urls.pop2022), fetch(urls.pib), fetch(urls.salario)
-        ]);
+        // Tenta buscar os dois dados ao mesmo tempo
+        const responses = await Promise.all(urls.map(url => fetch(url)));
 
-        if (!resPop.ok || !resPib.ok || !resSal.ok) throw new Error("Erro na resposta do IBGE");
+        // Verifica se algum falhou
+        responses.forEach(res => {
+            if (!res.ok) throw new Error(`Erro IBGE: ${res.status}`);
+        });
 
-        const jsonPop = await resPop.json();
-        const jsonPib = await resPib.json();
-        const jsonSal = await resSal.json();
+        const data = await Promise.all(responses.map(res => res.json()));
 
-        // Atualiza Dados Globais com Segurança
-        if (jsonPop[1]?.V) appData.populacao[2022] = parseInt(jsonPop[1].V);
-        if (jsonPib[1]?.V) appData.pib = parseFloat(jsonPib[1].V);
-        if (jsonSal[1]?.V) appData.salario = parseFloat(jsonSal[1].V);
+        // --- PROCESSAMENTO DOS DADOS ---
+        
+        // 1. População
+        const popValue = data[0][0].resultados[0].series[0].serie['2022'];
+        
+        // 2. PIB (O valor vem em x1000, ex: 18000000)
+        const pibValue = data[1][0].resultados[0].series[0].serie['2021'] || data[1][0].resultados[0].series[0].serie['2020'];
 
-        console.log("✅ Dados IBGE Atualizados:", appData);
-        updateKpiNumbers(); // Atualiza interface
+        // Atualiza a variável global appData com os dados frescos
+        appData.populacao[2022] = parseInt(popValue);
+        appData.pib = parseFloat(pibValue) / 1000000; // Ajusta para Bilhões se necessário, ou mantém original
+
+        console.log("✅ Dados IBGE atualizados com sucesso!");
+        
+        // Chama a função que desenha os números na tela
+        updateDashboardUI();
 
     } catch (error) {
         console.warn("⚠️ Falha na API (Usando Backup):", error.message);
+        // Se der erro, a interface usa o 'appData' original que definimos no topo do arquivo
+        updateDashboardUI();
     }
 }
 
@@ -249,12 +265,13 @@ function initAllCharts() {
     }, { scales: { y: { type: 'logarithmic' } } });
 }
 
-// Helper: Cria Gráfico com Verificação de Existência
+// Helper: Cria Gráfico com Verificação e Armazenamento
 function createChart(id, type, data, extraOptions = {}) {
     const ctx = document.getElementById(id);
     if (!ctx) return;
     
-    new Chart(ctx, {
+    // Cria o gráfico
+    const newChart = new Chart(ctx, {
         type: type,
         data: data,
         options: {
@@ -264,7 +281,15 @@ function createChart(id, type, data, extraOptions = {}) {
             ...extraOptions
         }
     });
+
+    // --- CORREÇÃO: Salva o gráfico na lista para podermos mudar a cor depois ---
+    if (typeof chartInstances !== 'undefined') {
+        chartInstances.push(newChart);
+    }
+
+    return newChart;
 }
+
 
 // Helper: Cria Gradiente
 function createGradient(context, color) {
@@ -340,4 +365,179 @@ function animateValue(obj, start, end, duration, isDecimal, originalText) {
         else obj.innerHTML = originalText;
     };
     window.requestAnimationFrame(step);
+}
+
+
+
+/* =======================================================================
+   GERENCIADOR DE TEMAS (DARK / WHITE - VERSÃO ÍCONES)
+   ======================================================================= */
+
+function initThemeSystem() {
+    const themeBtn = document.getElementById('theme-toggle');
+    console.log("Botão de tema encontrado?", themeBtn);
+    // Busca o elemento 'i' (ícone) dentro do botão
+    const themeIcon = themeBtn ? themeBtn.querySelector('i') : null;
+    const body = document.body;
+
+    // Verifica preferência salva
+    const savedTheme = localStorage.getItem('site_theme');
+    if (savedTheme === 'light') {
+        body.classList.add('light-theme');
+        updateButtonState(true); 
+        
+        // --- CORREÇÃO: Garante que os gráficos carreguem pretos ---
+        setTimeout(() => {
+            if (typeof updateChartsTheme === 'function') updateChartsTheme(true);
+            if (typeof fixChartPop === 'function') fixChartPop(true);
+        }, 500); // Pequeno delay para dar tempo do gráfico ser criado
+    } else {
+        updateButtonState(false); 
+    }
+
+    // Evento de Clique
+    if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            const isLight = body.classList.contains('light-theme');
+            
+            localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
+            updateButtonState(isLight);
+            
+            // Tenta atualizar os gráficos, mas não trava se der erro
+            try {
+                if (typeof updateChartsTheme === 'function') updateChartsTheme(isLight);
+                if (typeof fixChartPop === 'function') fixChartPop(isLight);
+            } catch (error) {
+                console.log("Aguardando gráficos carregarem...", error);
+            }
+        });
+    }
+
+    // --- FUNÇÃO QUE TROCA O ÍCONE ---
+    function updateButtonState(isLight) {
+        if (!themeIcon) return;
+        
+        if (isLight) {
+            // Se está CLARO, queremos a LUA (fa-moon)
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        } else {
+            // Se está ESCURO, queremos o SOL (fa-sun)
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+    }
+
+    // Também adicione logo após verificar o tema salvo (para quando abrir o site)
+    if (savedTheme === 'light') {
+        body.classList.add('light-theme');
+        updateButtonState(true);
+        
+        // ADICIONE AQUI TAMBÉM:
+        setTimeout(() => updateChartsTheme(true), 100); // Pequeno delay para garantir que o gráfico carregou
+    }
+}
+
+// --- FUNÇÃO PARA ATUALIZAR CORES DOS GRÁFICOS (DARK/LIGHT) ---
+function updateChartsTheme(isLight) {
+    // --- CONFIGURAÇÃO DE CORES ---
+    
+    // 1. TEXTO (Eixos X e Y):
+    // Light: Preto Puro (#000000)
+    // Dark:  Cinza Claro (#AAAAAA)
+    const textColor = isLight ? '#000000' : '#AAAAAA';
+    
+    // 2. GRADE (Linhas de fundo):
+    // Light: Cinza Escuro (#444444) - Para destacar no branco
+    // Dark:  Transparente (rgba 255, 0.05) - Para ficar sutil no preto
+    const gridColor = isLight ? '#444444' : 'rgba(255, 255, 255, 0.05)';
+    
+    // Aplica nos padrões globais
+    if (window.Chart) {
+        Chart.defaults.color = textColor;
+        Chart.defaults.borderColor = gridColor;
+    }
+
+    // Aplica em cada gráfico já criado
+    chartInstances.forEach(chart => {
+        if (chart.options) {
+            chart.options.color = textColor; // Muda a cor geral do texto
+            
+            if (chart.options.scales) {
+                Object.keys(chart.options.scales).forEach(scaleKey => {
+                    const scale = chart.options.scales[scaleKey];
+                    
+                    // Atualiza a GRADE
+                    if (scale.grid) scale.grid.color = gridColor;
+                    
+                    // Atualiza os VALORES X e Y (Ticks)
+                    if (scale.ticks) {
+                        scale.ticks.color = textColor; 
+                        scale.ticks.backdropColor = 'transparent'; // Garante fundo limpo
+                    }
+                });
+            }
+        }
+        chart.update(); 
+    });
+}
+
+// Função Específica: Corrige o Gráfico de População
+function fixChartPop(isLight) {
+    const chartInstance = Chart.getChart("chartPop"); 
+
+    if (chartInstance) {
+        // --- MESMAS CORES DA FUNÇÃO ACIMA ---
+        const novaCorTexto = isLight ? '#000000' : '#FFFFFF'; // Preto ou Branco
+        const novaCorGrade = isLight ? '#444444' : 'rgba(255, 255, 255, 0.1)'; // Cinza ou Transparente
+
+        // Eixo X (Horizontal)
+        if (chartInstance.options.scales.x) {
+            chartInstance.options.scales.x.ticks.color = novaCorTexto; // Muda cor dos números
+            chartInstance.options.scales.x.grid.color = novaCorGrade;  // Muda cor da linha
+        }
+        
+        // Eixo Y (Vertical)
+        if (chartInstance.options.scales.y) {
+            chartInstance.options.scales.y.ticks.color = novaCorTexto; // Muda cor dos números
+            chartInstance.options.scales.y.grid.color = novaCorGrade;  // Muda cor da linha
+        }
+
+        // Legenda
+        if (chartInstance.options.plugins.legend) {
+            chartInstance.options.plugins.legend.labels.color = novaCorTexto;
+        }
+
+        chartInstance.update();
+    }
+}
+
+// --- FUNÇÃO QUE ATUALIZA OS NÚMEROS NA TELA (KPIs) ---
+function updateDashboardUI() {
+    // 1. Atualiza População
+    const kpiPop = document.getElementById('kpi-pop');
+    if (kpiPop) {
+        // Pega o valor de 2022 do nosso objeto de dados
+        kpiPop.innerText = appData.populacao[2022].toLocaleString('pt-BR');
+    }
+
+    // 2. Atualiza PIB
+    const kpiPib = document.getElementById('kpi-pib');
+    if (kpiPib) {
+        // Formata para "R$ X.XXX,XX Bi"
+        kpiPib.innerText = "R$ " + appData.pib.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + " Bi";
+    }
+
+    // 3. Atualiza Densidade (se existir o elemento)
+    const kpiDens = document.getElementById('kpi-densidade');
+    if (kpiDens) {
+        kpiDens.innerText = appData.densidade.toLocaleString('pt-BR');
+    }
+
+    // 4. Atualiza Salário/Renda (se existir o elemento)
+    const kpiRenda = document.getElementById('kpi-renda');
+    if (kpiRenda) {
+        kpiRenda.innerText = appData.salario.toLocaleString('pt-BR') + " salários";
+    }
 }

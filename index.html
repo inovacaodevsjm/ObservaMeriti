@@ -8,6 +8,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
 </head>
@@ -18,9 +19,15 @@
     <header>
         <div class="container header-flex">
             <div class="logo-left">
-                <img src="assets/img/logo-horizontal-white.png" alt="Prefeitura SJM">
+                <img class="img-dark-theme" src="assets/img/logo-horizontal-white.png" alt="Prefeitura SJM">
+                
+                <img class="img-light-theme" src="assets/img/logo-horizontal-colorida.png" alt="Prefeitura SJM Light">
+
+                <button id="theme-toggle" class="theme-btn" aria-label="Alternar Tema">
+                    <i class="fas fa-sun"></i>
+                </button>
             </div>
-            
+                    
             <button class="mobile-menu-btn" onclick="toggleMenu()"> ☰ </button>
             
             <nav class="nav-menu" id="navMenu">
@@ -35,7 +42,9 @@
             </nav>
 
             <div class="logo-right">
-                <img src="assets/img/logo-sjm-box.png" alt="SJM Logo">
+                <img class="img-dark-theme" src="assets/img/logo-sjm-box.png" alt="SJM Logo">
+                
+                <img class="img-light-theme" src="assets/img/logo-vertical-colorida.png" alt="SJM Logo Light">
             </div>
         </div>
     </header>

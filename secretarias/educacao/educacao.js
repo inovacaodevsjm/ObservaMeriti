@@ -17,6 +17,8 @@ const COLORS = {
     grid: 'rgba(255, 255, 255, 0.05)'
 };
 
+let chartInstances = []; // <--- ADICIONE ISSO
+
 // Dados Estáticos (Armazenados aqui por enquanto)
 const DB = {
     ideb: { 
@@ -57,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Chart.defaults.scale.grid.color = COLORS.grid;
     Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(0,0,0,0.9)';
     Chart.defaults.plugins.tooltip.titleColor = COLORS.yellow;
-
+    initThemeSystem();
     initScrollAnimation();
     initKpiCounters();
     initLoaderSystem(); 
@@ -350,3 +352,100 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+function createChart(id, type, data, options = {}) {
+    const ctx = document.getElementById(id);
+    if (!ctx) return null;
+
+    const newChart = new Chart(ctx, {
+        type: type,
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            ...options
+        }
+    });
+
+    // ADICIONADO: Salva na lista para o tema funcionar
+    chartInstances.push(newChart); 
+    
+    return newChart;
+}
+
+/* =======================================================================
+   SISTEMA DE TEMA (DARK / WHITE)
+   ======================================================================= */
+
+function initThemeSystem() {
+    const themeBtn = document.getElementById('theme-toggle');
+    const body = document.body;
+    const themeIcon = themeBtn ? themeBtn.querySelector('i') : null;
+
+    // --- CORREÇÃO DA LÓGICA DO ÍCONE ---
+    function updateButtonState(isLight) {
+        if (!themeIcon) return;
+        
+        // Se está CLARO (Light) -> Mostra a LUA (fa-moon) para ir pro escuro
+        // Se está ESCURO (Dark)  -> Mostra o SOL (fa-sun) para ir pro claro
+        if (isLight) {
+            themeIcon.className = 'fas fa-moon';
+        } else {
+            themeIcon.className = 'fas fa-sun';
+        }
+    }
+
+    // Carrega tema salvo
+    const savedTheme = localStorage.getItem('site_theme');
+    if (savedTheme === 'light') {
+        body.classList.add('light-theme');
+        updateButtonState(true);
+        setTimeout(() => updateChartsTheme(true), 500); 
+    } else {
+        // Garante que o ícone comece certo no tema escuro
+        updateButtonState(false);
+    }
+
+    // Clique do Botão
+    if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('light-theme');
+            const isLight = body.classList.contains('light-theme');
+            
+            localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
+            updateButtonState(isLight);
+            updateChartsTheme(isLight); 
+        });
+    }
+}
+
+// Função que pinta os gráficos de Preto (Light) ou Cinza/Branco (Dark)
+function updateChartsTheme(isLight) {
+    // Cores: Texto Preto no Claro, Cinza no Escuro
+    const textColor = isLight ? '#000000' : '#AAAAAA';
+    // Grades: Cinza Escuro no Claro, Transparente no Escuro
+    const gridColor = isLight ? '#444444' : 'rgba(255, 255, 255, 0.05)';
+
+    // Atualiza Padrão
+    if (window.Chart) {
+        Chart.defaults.color = textColor;
+        Chart.defaults.borderColor = gridColor;
+    }
+
+    // Atualiza cada gráfico da página
+    chartInstances.forEach(chart => {
+        if (chart.options) {
+            chart.options.color = textColor;
+            
+            if (chart.options.scales) {
+                Object.keys(chart.options.scales).forEach(key => {
+                    const scale = chart.options.scales[key];
+                    if (scale.grid) scale.grid.color = gridColor;
+                    if (scale.ticks) scale.ticks.color = textColor;
+                });
+            }
+        }
+        chart.update();
+    });
+}
