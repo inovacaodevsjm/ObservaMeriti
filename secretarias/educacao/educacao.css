@@ -361,6 +361,10 @@ body.light-theme .logo-left img.img-light-theme {
     width: auto !important;
 }
 
+body.light-theme .sebrae-chart-wrapper canvas {
+    filter: saturate(1.2); /* Deixa as cores da API mais vivas no modo claro */
+}
+
 /* =======================================================================
    COR DO ÍCONE DO TEMA (CORREÇÃO FINAL)
    ======================================================================= */

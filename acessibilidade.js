@@ -33,49 +33,37 @@ function initAccessibilityMenu() {
 function initAccessibilityFeatures() {
     const body = document.body;
 
-    // --- A) TEMA DARK/LIGHT (Conectado à função global) ---
     const themeCheckbox = document.getElementById('toggle-theme');
     
-     if (themeCheckbox) {
-        // Sincroniza estado inicial
+    if (themeCheckbox) {
         themeCheckbox.checked = body.classList.contains('light-theme');
 
-        // Ao clicar no switch...
         themeCheckbox.addEventListener('change', () => {
-            // VERIFICAÇÃO DE SEGURANÇA: Chama a função global se ela existir
             if (typeof window.toggleSiteTheme === 'function') {
                 window.toggleSiteTheme();
             } else {
-                console.error("ERRO: A função window.toggleSiteTheme não foi encontrada no script.js!");
-                // Fallback de emergência (caso o script.js falhe)
                 body.classList.toggle('light-theme');
             }
         });
 
-        // Ouve se o tema mudou por outro meio
         const observer = new MutationObserver(() => {
             themeCheckbox.checked = body.classList.contains('light-theme');
         });
-        observer.observe(body, { attributes: true, attributeFilter: ['class'] });
 
-        const features = [
+        observer.observe(body, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    const features = [
         { id: 'toggle-contrast', className: 'high-contrast' },
-        { id: 'toggle-grayscale', className: 'grayscale-mode' }, // <--- NOVO
+        { id: 'toggle-grayscale', className: 'grayscale-mode' },
         { id: 'toggle-font', className: 'font-large' },
         { id: 'toggle-motion', className: 'reduce-motion' },
         { id: 'toggle-focus', className: 'focus-visible' }
-      ];
+    ];
 
-      features.forEach(feature => {
-          setupToggle(feature.id, feature.className);
-      });
-    }
-
-    // --- B) OUTRAS FUNCIONALIDADES ---
-    setupToggle('toggle-contrast', 'high-contrast');
-    setupToggle('toggle-font', 'font-large');
-    setupToggle('toggle-motion', 'reduce-motion');
-    setupToggle('toggle-focus', 'focus-visible');
+    features.forEach(feature => {
+        setupToggle(feature.id, feature.className);
+    });
 }
 
 function setupToggle(id, className) {
@@ -96,4 +84,10 @@ function setupToggle(id, className) {
         }
     });
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    initAccessibilityMenu();
+    initAccessibilityFeatures();
+});
 

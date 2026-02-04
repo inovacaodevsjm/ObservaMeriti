@@ -10,13 +10,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="educacao.css">
+    <script src="../../acessibilidade.js" defer></script>    
     <script src="educacao.js" defer></script>
-    <link rel="stylesheet" href="../../acessibilidade.css">
-    <script src="../../acessibilidade.js" defer></script>
-    
 </head>
 <body>
 
@@ -229,98 +229,29 @@
                 </div>
             </div>
 
-            <div class="analise-card card-gradient-border sebrae-card">
+           <div class="analise-card card-gradient-border sebrae-card">
                 <div class="sebrae-info">
-                    <h3 class="info-title">Distribuição de Matrículas</h3>
+                    <h3 class="info-title">Matrículas por Nível de Ensino</h3>
                     
                     <div class="filters-row">
                         <div class="info-segmentation" style="width: 100%;">
                             <label>Etapa de Ensino</label>
                             <select id="filterMatriculasType" class="chart-filter" style="width: 60%">
+                                <option value="total">Total (Geral)</option>
                                 <option value="infantil">Educação Infantil</option>
                                 <option value="fundamental">Ensino Fundamental</option>
                             </select>
                         </div>
                     </div>
 
-                    <p class="info-description">
-                        Em São João De Meriti, em 2024, no âmbito de <strong>Educação Infantil</strong>, a modalidade <strong>Pré-escola</strong> representa <strong>70.8%</strong> do total, somando <strong>9,476</strong> matrículas.
-                        <br><br>
-                        Esta visualização apresenta a distribuição relativa das matrículas ao longo dos anos.
-                        <br><br>
+                    <p id="desc-matriculas" class="info-description">
+                        </p>
+                    <p class="info-description" style="border-top: none; margin-top: 0; padding-top: 0;">
                         Dados fornecidos por <strong>CENSO</strong>.
                     </p>
                 </div>
                 <div class="sebrae-chart-wrapper">
                     <canvas id="chartMatriculas"></canvas>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="section-charts container">
-        <h2 class="section-title">Indicadores de <span class="text-gradient">Desempenho ENEM</span></h2>
-        
-        <div class="sebrae-list">
-            <div class="analise-card card-gradient-border sebrae-card">
-                <div class="sebrae-info">
-                    <h3 class="info-title">Pontuação Média no ENEM</h3>
-                    
-                    <div class="filters-row">
-                        <div class="info-segmentation">
-                            <label>Período</label>
-                            <select id="filterEnemYear" class="chart-filter">
-                                <option value="2023">2023</option>
-                                <option value="2022">2022</option>
-                                <option value="2021">2021</option>
-                                <option value="2020">2020</option>
-                                <option value="2019">2019</option>
-                            </select>
-                        </div>
-
-                        <div class="info-segmentation">
-                            <label>Categoria</label>
-                            <select id="filterEnemCategory" class="chart-filter">
-                                <option value="genero">Gênero</option>
-                                <option value="localizacao">Localização</option>
-                                <option value="administracao">Administração</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <p class="info-description">
-                        Este indicador monitora o desempenho anual dos estudantes da rede nas quatro áreas do conhecimento.
-                    </p>
-                </div>
-                <div class="sebrae-chart-wrapper">
-                    <canvas id="chartEnem"></canvas>
-                </div>
-            </div>
-
-
-            <div class="analise-card card-gradient-border sebrae-card">
-                <div class="sebrae-info">
-                    <h3 class="info-title">Comparativo ENEM</h3>
-                    <div class="info-segmentation">
-                        <label style="margin-bottom:10px; display:block; color:#CCC;">Municípios:</label>
-                        <div style="display:flex; flex-direction:column; gap:8px;">
-                            <label style="color:#FFF; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px;">
-                                <input type="checkbox" value="Brasil" checked class="mun-checkbox"> <span style="color:#009039;">🇧🇷 Brasil</span>
-                            </label>
-                            <label style="color:#FFF; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px;">
-                                <input type="checkbox" value="Rio De Janeiro" checked class="mun-checkbox"> <span style="color:#00A8E8;">🏖️ Rio de Janeiro</span>
-                            </label>
-                            <label style="color:#FFF; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px;">
-                                <input type="checkbox" value="São Gonçalo" checked class="mun-checkbox"> <span style="color:#8E44AD;">🏙️ São Gonçalo</span>
-                            </label>
-                            <label style="color:#FFF; font-size:13px; cursor:pointer; display:flex; align-items:center; gap:8px;">
-                                <input type="checkbox" value="São João De Meriti" checked class="mun-checkbox"> <span style="color:#FDC806;">📍 São João de Meriti</span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="sebrae-chart-wrapper">
-                    <canvas id="chartEnemComparativo"></canvas>
                 </div>
             </div>
         </div>
