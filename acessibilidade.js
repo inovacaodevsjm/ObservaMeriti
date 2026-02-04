@@ -36,22 +36,30 @@ function initAccessibilityFeatures() {
     const themeCheckbox = document.getElementById('toggle-theme');
     
     if (themeCheckbox) {
-        themeCheckbox.checked = body.classList.contains('light-theme');
-
-        themeCheckbox.addEventListener('change', () => {
-            if (typeof window.toggleSiteTheme === 'function') {
-                window.toggleSiteTheme();
-            } else {
-                body.classList.toggle('light-theme');
-            }
-        });
-
-        const observer = new MutationObserver(() => {
-            themeCheckbox.checked = body.classList.contains('light-theme');
-        });
-
-        observer.observe(body, { attributes: true, attributeFilter: ['class'] });
+    // 1. Carrega o estado inicial do localStorage
+    const savedTheme = localStorage.getItem('site_theme');
+    if (savedTheme === 'light') {
+        body.classList.add('light-theme');
+        themeCheckbox.checked = true;
     }
+
+    themeCheckbox.addEventListener('change', () => {
+        const isLight = themeCheckbox.checked;
+        
+        if (isLight) {
+            body.classList.add('light-theme');
+            localStorage.setItem('site_theme', 'light');
+        } else {
+            body.classList.remove('light-theme');
+            localStorage.setItem('site_theme', 'dark');
+        }
+
+        // Avisa os gráficos (importante para a página de educação)
+        window.dispatchEvent(new CustomEvent('themeChanged', { 
+            detail: { theme: isLight ? 'light' : 'dark' } 
+        }));
+    });
+}
 
     const features = [
         { id: 'toggle-contrast', className: 'high-contrast' },

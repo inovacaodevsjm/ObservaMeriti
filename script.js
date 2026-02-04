@@ -18,7 +18,6 @@ const COLORS = {
 
 // --- 2. INICIALIZAÇÃO ---
 document.addEventListener('DOMContentLoaded', () => {
-    initThemeSystem();      // Cria a função global toggleSiteTheme
     initMobileMenu();
     initScrollAnimation();
     initCounterAnimation();
