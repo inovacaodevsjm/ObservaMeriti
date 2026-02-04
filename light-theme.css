@@ -1,0 +1,111 @@
+/* =======================================================================
+   LIGHT-THEME.CSS
+   Descrição: Estilos exclusivos para o modo claro.
+   Ativado pela classe .light-theme no body.
+   ======================================================================= */
+
+/* 1. VARIÁVEIS DE CORES */
+body.light-theme {
+    --bg-body: #F4F4F4;
+    --bg-card: #FFFFFF;
+    --bg-header: rgba(255, 255, 255, 0.95);
+    --bg-menu: rgba(255, 255, 255, 0.98);
+    --text-primary: #1A1A1A;
+    --text-secondary: #555555;
+    --border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 2. HEADER E LOGOS */
+body.light-theme header {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+body.light-theme .img-dark-theme { display: none !important; }
+body.light-theme .img-light-theme { display: block !important; }
+body.light-theme .logo-left img.img-light-theme {
+    height: 80px !important; 
+    width: auto !important;
+}
+
+/* Botão Toggle */
+body.light-theme .theme-btn {
+    border-color: #000000;
+    background-color: rgba(0,0,0,0.05);
+}
+body.light-theme .theme-btn i {
+    left: calc(100% - 19px);
+    color: #000000;
+    background: rgba(0, 0, 0, 0.1);
+}
+body.light-theme .theme-btn:hover { background: rgba(0, 0, 0, 0.05); }
+
+/* 3. MENU DE NAVEGAÇÃO */
+body.light-theme .nav-menu a { 
+    color: #1A1A1A !important;
+    font-weight: 500 !important; 
+}
+body.light-theme .nav-menu a:hover { color: var(--brand-green) !important; }
+body.light-theme .nav-menu, 
+body.light-theme .nav-menu ul,
+body.light-theme .nav-menu li {
+    background: transparent !important;
+}
+body.light-theme .mobile-menu-btn { color: #1A1A1A !important; }
+
+/* 4. HERO SECTION */
+body.light-theme .hero {
+    background: 
+        linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(244,244,244,1)),
+        url('assets/img/Imagem\ do\ Topo\ do\ site\ 2.jpeg'); 
+    background-size: cover; background-position: center top; background-repeat: no-repeat;
+}
+body.light-theme .hero h1 { color: #000000 !important; text-shadow: none !important; }
+body.light-theme .hero .text-gradient {
+    background: linear-gradient(to right, #009039, #FDC806) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+    color: transparent !important; -webkit-text-stroke: 0.5px #000000;
+}
+body.light-theme .hero p { color: #333; }
+
+/* 5. CARDS E GRÁFICOS */
+body.light-theme .card-gradient-border::before { display: none !important; }
+body.light-theme .kpi-card,
+body.light-theme .painel-card,
+body.light-theme .analise-card,
+body.light-theme .sebrae-card {
+    border: 1px solid #000000 !important;
+    background: #FFFFFF !important; 
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+body.light-theme .kpi-title, body.light-theme .kpi-value, body.light-theme .info-title, body.light-theme .sebrae-info h3, body.light-theme .painel-title { 
+    color: #1A1A1A !important; font-weight: 700;
+}
+body.light-theme .kpi-source, body.light-theme .info-description, body.light-theme .analise-content p { 
+    color: #555555 !important; font-weight: 500; border-top-color: rgba(0,0,0,0.1) !important;
+}
+body.light-theme .info-description strong { color: #009039 !important; }
+body.light-theme .info-segmentation label { color: #000000 !important; font-weight: 700; opacity: 0.7; }
+body.light-theme .chart-filter {
+    background-color: #F0F0F0 !important; border: 1px solid #CCCCCC !important; color: #1A1A1A !important;
+}
+body.light-theme .chart-filter:hover {
+    border-color: #009039 !important; color: #009039 !important; background-color: #FFFFFF !important;
+}
+body.light-theme .analise-chart, body.light-theme .sebrae-chart-wrapper { background: transparent !important; }
+
+/* 6. LOADER TECNOLÓGICO */
+body.light-theme .loader-container { background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0,0,0,0.05); }
+body.light-theme .tech-loader { border-top-color: var(--brand-blue, #0056b3) !important; box-shadow: 0 0 12px rgba(0, 86, 179, 0.25) !important; }
+body.light-theme .tech-loader::before { border-top-color: var(--brand-green, #009039) !important; }
+body.light-theme .loading-text { color: #0056b3 !important; }
+
+/* 7. RESPONSIVIDADE */
+@media (max-width: 900px) {
+    body.light-theme .theme-btn i { left: calc(100% - 17px); }
+    body.light-theme .nav-menu {
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-left: 1px solid rgba(0,0,0,0.1);
+    }
+    body.light-theme .nav-menu a { color: #1A1A1A !important; }
+}

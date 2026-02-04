@@ -1,13 +1,10 @@
 /* =======================================================================
-   STYLE.CSS - ORGANIZADO E CORRIGIDO
-   Descrição: Estrutura limpa: Variáveis > Base > Componentes > Mobile
+   STYLE.CSS - VERSÃO FINAL COMPLETA
+   Descrição: Estilo Global (Home + Educação), Temas e Acessibilidade.
    ======================================================================= */
 
 /* =======================================================================
-   1. CONFIGURAÇÃO E CORES (VARIÁVEIS)
-   ======================================================================= */
-/* =======================================================================
-   1. CONFIGURAÇÃO E CORES (VARIÁVEIS)
+   1. VARIÁVEIS E TEMAS
    ======================================================================= */
 :root {
     /* --- TEMA DARK (PADRÃO) --- */
@@ -20,19 +17,18 @@
     --text-secondary: #B0B0B0;
     --border-color: rgba(255, 255, 255, 0.1);
     
-    /* Cores da Marca (Fixas) */
+    /* Cores da Marca */
     --brand-green: #009039;
     --brand-yellow: #FDC806;
     --brand-blue: #0000A8;
 
-    /* --- AS LINHAS QUE FALTAVAM (CORREÇÃO) --- */
-    /* O gerador de bordas usa estes nomes específicos: */
+    /* Gradientes das Bordas */
     --grad-start: #009039; 
     --grad-mid: #FDC806;   
     --grad-end: #0000A8;   
 }
 
-/* --- TEMA WHITE (CLASSE .light-theme) --- */
+/* --- TEMA WHITE (Ativado via classe .light-theme) --- */
 body.light-theme {
     --bg-body: #F4F4F4;
     --bg-card: #FFFFFF;
@@ -46,8 +42,59 @@ body.light-theme {
     --border-color: rgba(0, 0, 0, 0.1);
 }
 
+/* --- REGRAS ESPECÍFICAS DO TEMA LIGHT --- */
+body.light-theme header {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Troca de Logos */
+.img-light-theme { display: none !important; } /* Esconde logo clara no dark */
+body.light-theme .img-dark-theme { display: none !important; }
+body.light-theme .img-light-theme { display: block !important; }
+
+/* Ajuste Logo Light */
+body.light-theme .logo-left img.img-light-theme {
+    height: 80px !important; 
+    width: auto !important;
+}
+
+/* Menu Desktop no Light */
+body.light-theme .nav-menu a { color: #1A1A1A !important; font-weight: 500 !important; }
+body.light-theme .nav-menu a:hover { color: var(--brand-green) !important; }
+body.light-theme .mobile-menu-btn { color: #1A1A1A !important; }
+
+/* Hero no Light */
+body.light-theme .hero {
+    background: linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(244,244,244,1)), url('assets/img/Imagem do Topo do site 2.jpeg'); 
+    background-size: cover; background-position: center top; background-repeat: no-repeat;
+}
+body.light-theme .hero h1 { color: #000000 !important; text-shadow: none !important; }
+body.light-theme .hero .text-gradient { -webkit-text-stroke: 0.5px #000000; }
+body.light-theme .hero p { color: #333; }
+
+/* Cards no Light (Brancos com Borda Preta) */
+body.light-theme .card-gradient-border::before { display: none !important; }
+body.light-theme .kpi-card,
+body.light-theme .painel-card,
+body.light-theme .analise-card,
+body.light-theme .sebrae-card {
+    border: 1px solid #000000 !important;
+    background: #FFFFFF !important; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+body.light-theme .kpi-title, body.light-theme .kpi-value, 
+body.light-theme .info-title, body.light-theme .painel-title { color: #1A1A1A !important; }
+body.light-theme .kpi-source, body.light-theme .info-description, 
+body.light-theme .analise-content p { color: #555 !important; border-top-color: rgba(0,0,0,0.1) !important; }
+body.light-theme .chart-filter {
+    background-color: #F0F0F0 !important; border: 1px solid #CCCCCC !important; color: #1A1A1A !important;
+}
+body.light-theme .loader-container { background: rgba(255, 255, 255, 0.95) !important; border: 1px solid rgba(0,0,0,0.05); }
+
+
 /* =======================================================================
-   2. RESET E BASE
+   2. RESET E ESTRUTURA
    ======================================================================= */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -69,332 +116,232 @@ body {
    3. CABEÇALHO (HEADER)
    ======================================================================= */
 header {
-    background-color: var(--bg-header); /* Usa a variável para trocar de cor */
+    background-color: var(--bg-header); 
     backdrop-filter: blur(10px);
     
-    /* Trava a altura */
+    /* Altura Travada */
     height: 130px !important;
     max-height: 130px !important;
     overflow: visible;
     
-    /* Posicionamento Fixo */
-    position: fixed;
-    top: 4px; left: 0; width: 100%;
-    z-index: 1000;
+    padding: 0; margin: 0; border-bottom: none;
     
-    border-bottom: none;
-    display: flex; align-items: center;
-}
-
-/* Força Header Branco no Tema Light (Segurança Extra) */
-body.light-theme header {
-    background-color: rgba(255, 255, 255, 0.95) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
+    /* Fixação */
+    position: fixed; top: 4px; left: 0; width: 100%; z-index: 1000;
+    display: flex; align-items: center; 
 }
 
 .header-flex {
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
-    position: relative;
+    height: 100%; display: flex; justify-content: space-between; align-items: center;
+    width: 100%; max-width: 1280px; margin: 0 auto; position: relative;
 }
 
-/* LOGOS E BOTÃO DE TEMA */
+/* 1. Alinha a Logo e o Botão lado a lado */
 .logo-left {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
-    gap: 15px;
+    align-items: center; /* Centraliza verticalmente */
+    gap: 20px; /* Distância entre a Logo e o Botão */
 }
 
-.logo-left img { height: 70px; width: auto; display: block; }
-
-.logo-right img { 
-    height: 90px; width: auto; display: block; 
-    max-height: 120px; /* Evita esticar o header */
-}
-
-
-/* Controle de visibilidade das logos por tema */
-.img-light-theme { display: none !important; }
-body.light-theme .img-dark-theme { display: none !important; }
-body.light-theme .img-light-theme { display: block !important; }
-
-
-body.light-theme .logo-left img.img-light-theme {
-    /* O padrão costuma ser 45px ou 50px. 
-       Tente aumentar para 60px ou 65px até ficar visualmente igual a outra. */
-    height: 80px !important; 
-    
-    /* Se precisar ajustar a largura também (caso fique distorcida): */
-    width: auto !important;
-}
-
-/* BOTÃO TOGGLE (SOL/LUA) */
-.theme-btn {
+/* 2. Remove margens antigas do wrapper */
+.accessibility-wrapper {
     position: relative;
-    width: 42px; height: 22px;
-    margin-top: 5px;
-    background: transparent;
-    border: 1px solid var(--brand-yellow); 
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    margin: 0; /* Remove margem esquerda antiga */
+    z-index: 1100;
 }
-
-.theme-btn i {
-    position: absolute;
-    top: 50%; left: 3px;
-    transform: translateY(-50%); 
-    font-size: 11px;
-    color: var(--brand-yellow);
-    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    
-    display: flex; align-items: center; justify-content: center;
-    width: 16px; height: 16px;
-    background: rgba(253, 200, 6, 0.1);
-    border-radius: 50%;
-}
-
-.theme-btn:hover { background: rgba(253, 200, 6, 0.1); opacity: 0.8; }
-
-/* Estilo do Botão no Tema Light */
-body.light-theme .theme-btn {
-    border-color: #000000;
-    background-color: rgba(0,0,0,0.05);
-}
-body.light-theme .theme-btn i {
-    left: calc(100% - 19px); /* Desliza para direita */
-    color: #000000;
-    background: rgba(0, 0, 0, 0.1);
-}
-body.light-theme .theme-btn:hover { background: rgba(0, 0, 0, 0.05); }
 
 /* =======================================================================
-   4. MENU DE NAVEGAÇÃO (DESKTOP)
+   MENU DROPDOWN (AJUSTADO PARA A ESQUERDA)
    ======================================================================= */
-.nav-menu {
+.accessibility-menu {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50px; left: 0; right: auto; width: 260px;
+    background: #1E2024; border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s ease;
+    z-index: 1200;
 }
 
-.nav-menu ul {
-    display: flex; gap: 30px;
-    list-style: none; margin: 0; padding: 0;
+.accessibility-menu.active { opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* Seta */
+.accessibility-menu::before {
+    content: ''; position: absolute; top: -6px; left: 12px; width: 12px; height: 12px;
+    background: #1E2024; transform: rotate(45deg);
+    border-left: 1px solid rgba(255,255,255,0.1); border-top: 1px solid rgba(255,255,255,0.1);
 }
 
+.logo-left img { height: 70px; width: auto; display: block; margin-bottom: 0; }
+.logo-right img { height: 90px; width: auto; display: block; max-height: 120px; }
+
+/* Menu Desktop (Centralizado Absolutamente) */
+.nav-menu {
+    position: absolute; left: 50%; transform: translateX(-50%);
+}
+.nav-menu ul { display: flex; gap: 30px; list-style: none; margin: 0; padding: 0; }
 .nav-menu a {
-    color: #FFF; 
-    text-decoration: none; 
-    font-size: 18px; font-weight: 300;
-    transition: color 0.3s;
-    white-space: nowrap;
+    color: #FFF; text-decoration: none; font-size: 18px; font-weight: 300;
+    transition: color 0.3s; white-space: nowrap;
 }
 .nav-menu a:hover { color: #FDC806; }
 
-/* Ajustes do Menu no Tema Light (Desktop) */
-body.light-theme .nav-menu a { 
-  color: #1A1A1A !important;
-  font-weight: 500 !important; }
-body.light-theme .nav-menu a:hover { color: var(--brand-green) !important; }
-body.light-theme .nav-menu, 
-body.light-theme .nav-menu ul,
-body.light-theme .nav-menu li {
-    background: transparent !important; /* Garante fundo limpo no desktop */
+/* Botão Mobile */
+.mobile-menu-btn {
+    display: none; font-size: 30px; color: #FFF; background: none; border: none; cursor: pointer; z-index: 1002;
 }
 
-/* Botão Mobile (Escondido no Desktop) */
-.mobile-menu-btn {
-    display: none;
-    font-size: 30px; color: #FFF; background: none; border: none; cursor: pointer;
-    z-index: 1002;
-}
-body.light-theme .mobile-menu-btn { color: #1A1A1A !important; }
+/* Botão de Tema Antigo (Escondido) */
+.theme-btn { display: none !important; }
+
 
 /* =======================================================================
-   5. SEÇÕES DA PÁGINA (HERO, GRÁFICOS, ETC)
+   4. ACESSIBILIDADE (BOTÃO E MENU)
+   ======================================================================= */
+.accessibility-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 20px;
+    z-index: 1100;
+}
+
+.accessibility-btn {
+    width: 35px; height: 35px; border-radius: 50%;
+    background: transparent; border: 1px solid var(--brand-yellow); color: var(--brand-yellow);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: all 0.3s ease; padding: 0;
+}
+.accessibility-btn:hover, .accessibility-btn[aria-expanded="true"] {
+    background: rgba(253, 200, 6, 0.1); transform: scale(1.05); box-shadow: 0 0 10px rgba(253, 200, 6, 0.2);
+}
+
+/* Menu Dropdown */
+.accessibility-menu {
+    position: absolute; top: 50px; right: 0; width: 260px;
+    background: #1E2024; border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px; padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s ease;
+}
+.accessibility-menu.active { opacity: 1; visibility: visible; transform: translateY(0); }
+.accessibility-menu::before {
+    content: ''; position: absolute; top: -6px; right: 12px; width: 12px; height: 12px;
+    background: #1E2024; transform: rotate(45deg); border-left: 1px solid rgba(255,255,255,0.1); border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Itens e Slider */
+.accessibility-item {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.accessibility-item:last-child { margin-bottom: 0; padding-bottom: 0; border: none; }
+
+.accessibility-item label { display: flex; align-items: center; justify-content: space-between; width: 100%; cursor: pointer; }
+
+.description { font-size: 13px; color: #CCC; font-weight: 500; }
+
+.accessibility-item input { display: none; }
+
+.slider { width: 36px; height: 20px; background-color: #555; border-radius: 20px; position: relative; transition: 0.3s; flex-shrink: 0; margin-left: 10px; }
+
+.slider::before { content: ''; position: absolute; width: 16px; height: 16px; left: 2px; bottom: 2px; background-color: white; border-radius: 50%; transition: 0.3s; }
+
+input:checked + .slider { background-color: #009039; }
+input:checked + .slider::before { transform: translateX(16px); }
+
+/* Acessibilidade - Estilos Light */
+body.light-theme .accessibility-btn {
+    border-color: #000000 !important; color: #000000 !important; background: rgba(0,0,0,0.05);
+    body.light-theme .accessibility-btn:hover { background: rgba(0, 0, 0, 0.1); }
+
+}/* Tema Light Menu */
+body.light-theme .accessibility-menu { background: #FFFFFF; border-color: rgba(0,0,0,0.1); box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+body.light-theme .accessibility-menu::before { background: #FFFFFF; border-color: rgba(0,0,0,0.1); }
+body.light-theme .accessibility-item { border-bottom-color: rgba(0,0,0,0.05); }
+body.light-theme .description { color: #333; }
+
+
+/* =======================================================================
+   5. COMPONENTES VISUAIS (HERO, KPIS, SLIDER)
    ======================================================================= */
 
-/* LINHA NEON TOPO */
+/* Linha Neon */
 .top-gradient-line {
     height: 5px; width: 100%;
     background: linear-gradient(45deg, #009039, #FDC806, #0000A8, #009039);
-    background-size: 300% 300%;
-    position: fixed; top: 0; left: 0; z-index: 9999;
-    animation: gradientFlow 6s ease infinite;
-    box-shadow: 0 1px 10px rgba(0, 144, 57, 0.4);
+    background-size: 300% 300%; position: fixed; top: 0; left: 0; z-index: 9999;
+    animation: gradientFlow 6s ease infinite; box-shadow: 0 1px 10px rgba(0, 144, 57, 0.4);
 }
-@keyframes gradientFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
+@keyframes gradientFlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
-/* HERO SECTION */
+/* Hero */
 .hero {
-  position: relative;
-  min-height: 600px;
-  display: flex; align-items: center; justify-content: center; text-align: center;
-  padding-top: 200px; padding-bottom: 20px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.9)), url('../../assets/img/Imagem do Topo do site.png'); 
-  background-size: cover; background-position: center top; background-repeat: no-repeat;
+    position: relative; min-height: 600px;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    padding-top: 200px; padding-bottom: 20px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.9)), url('assets/img/Imagem do Topo do site.png'); 
+    background-size: cover; background-position: center top; background-repeat: no-repeat;
 }
 .hero h1 { font-size: 56px; font-weight: 700; line-height: 1.1; margin-bottom: 20px; }
 .hero p { color: #DDD; font-size: 18px; max-width: 700px; margin: 0 auto 60px auto; }
 .text-gradient {
-  background: linear-gradient(to right, #009039, #FDC806);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  display: inline-block;
+    background: linear-gradient(to right, #009039, #FDC806);
+    -webkit-background-clip: text; background-clip: text; color: transparent; display: inline-block;
 }
 
-/* =======================================================================
-   AJUSTE DO HERO NO TEMA WHITE (Mudança de Imagem)
-   ======================================================================= */
-
-body.light-theme .hero {
-    /* 1. Troque a URL abaixo pela imagem clara que você quer usar */
-    background: 
-        /* Gradiente suave branco para misturar com o site claro */
-        linear-gradient(to bottom, rgba(255,255,255,0.3), rgba(244,244,244,1)),
-        
-        /* SUA NOVA IMAGEM AQUI */
-        url('assets/img/Imagem\ do\ Topo\ do\ site\ 2.jpeg'); 
-    
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
-}
-
-body.light-theme .hero h1 {
-    /* Isso muda apenas a parte "Observatório de Dados" para Preto */
-    color: #000000 !important;
-    
-    /* Remove sombras escuras que podem atrapalhar a leitura no fundo claro */
-    text-shadow: none !important; 
-}
-
-/* Opcional: Se quiser garantir que o "São João de Meriti" continue brilhando */
-body.light-theme .hero .text-gradient {
-    background: linear-gradient(to right, #009039, #FDC806) !important;
-    -webkit-background-clip: text !important;
-    background-clip: text !important;
-    color: transparent !important;
-    
-    /* A MÁGICA: Borda preta finíssima em volta das letras */
-    -webkit-text-stroke: 0.5px #000000;
-}
-
-body.light-theme .hero p {
-    color: #333; /* Texto cinza escuro */
-}
-
-/* KPI GRID */
+/* Cards e KPIs */
 .kpi-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-  width: 100%; max-width: 900px;
-  margin: -60px auto 80px auto; position: relative; z-index: 20;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    width: 100%; max-width: 900px; margin: -60px auto 80px auto; position: relative; z-index: 20;
 }
-.kpi-card {
-  padding: 25px; background: rgba(20, 20, 20, 0.98); border-radius: 12px;
-}
+.kpi-card { padding: 25px; background: rgba(20, 20, 20, 0.98); border-radius: 12px; }
 .kpi-number { font-size: 36px; font-weight: 700; margin-bottom: 5px; }
-.kpi-number.yellow { color: #FDC806; }
-.kpi-number.green { color: #009039; }
+.kpi-number.yellow { color: #FDC806; } .kpi-number.green { color: #009039; }
 .kpi-title { font-size: 15px; color: #FFF; margin-bottom: 8px; font-weight: 500; }
 .kpi-source { font-size: 11px; color: #888; text-transform: uppercase; }
-
-
-/* =======================================================================
-   AJUSTE DOS KPIS NO TEMA WHITE
-   ======================================================================= */
-
-/* 2. Título (Era Branco -> Vira Preto) */
-body.light-theme .kpi-title {
-    color: #1A1A1A !important;
-    font-weight: 600; /* Um pouco mais de peso para leitura */
-}
-
-/* 3. Fonte de Apoio/Fonte (Era Cinza claro -> Vira Cinza Escuro) */
-body.light-theme .kpi-source {
-    color: #555555 !important; /* Cinza chumbo */
-    font-weight: 500;
-}
-
-/* 4. (Opcional) Ajuste da borda gradiente para combinar melhor */
-body.light-theme .card-gradient-border::before {
-    opacity: 0.7; /* Deixa a borda colorida um pouco mais suave no claro */
-}
-
-/* =======================================================================
-   ESTILO DOS CARDS NO TEMA WHITE (Fundo Branco Puro)
-   ======================================================================= */
-
-/* 1. Desliga o gradiente colorido */
-body.light-theme .card-gradient-border::before {
-    display: none !important;
-}
-
-/* 2. Aplica Borda Preta e Fundo TOTALMENTE BRANCO */
-body.light-theme .kpi-card,
-body.light-theme .painel-card,
-body.light-theme .analise-card,
-body.light-theme .sebrae-card {
-    /* Borda Preta Sólida */
-    border: 1px solid #000000 !important;
-    
-    /* MUDANÇA: Fundo Branco Puro (#FFFFFF) */
-    background: #FFFFFF !important; 
-    
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Sombra leve */
-}
 
 /* Borda Gradiente */
 .card-gradient-border { position: relative; background: var(--bg-card); border-radius: 12px; z-index: 1; }
 .card-gradient-border::before {
-  content: ""; position: absolute; inset: -1px; border-radius: 13px; padding: 1px; 
-  background: linear-gradient(to right, var(--grad-start), var(--grad-mid)); 
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor;
-  pointer-events: none; z-index: -1;
+    content: ""; position: absolute; inset: -1px; border-radius: 13px; padding: 1px; 
+    background: linear-gradient(to right, var(--grad-start), var(--grad-mid)); 
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor;
+    pointer-events: none; z-index: -1;
 }
 
-/* PAINÉIS INTERATIVOS (SLIDER) */
+/* Slider */
 .slider-container { position: relative; width: 100%; padding: 0 60px; }
 .paineis-grid { display: flex; gap: 30px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 10px 50px 10px; scrollbar-width: none; }
 .paineis-grid::-webkit-scrollbar { display: none; }
-
-.painel-card {
-  padding: 20px; height: 450px; min-width: 320px; flex: 0 0 auto;
-  display: flex; flex-direction: column; justify-content: space-between; position: relative;
-}
+.painel-card { padding: 20px; height: 450px; min-width: 320px; flex: 0 0 auto; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
 .painel-title { font-size: 20px; font-weight: 600; margin-bottom: 15px; }
 .btn-painel {
-  background-color: #00C748; color: white; padding: 10px 24px; border-radius: 50px;
-  text-decoration: none; font-weight: 600; font-size: 14px; text-transform: uppercase;
-  position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
-  z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.5); white-space: nowrap; transition: background 0.3s;
+    background-color: #00C748; color: white; padding: 10px 24px; border-radius: 50px;
+    text-decoration: none; font-weight: 600; font-size: 14px; text-transform: uppercase;
+    position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); z-index: 10; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5); white-space: nowrap; transition: background 0.3s;
 }
 .btn-painel:hover { background-color: #00e050; }
-
-/* Setas */
 .slider-arrow {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  background: transparent; border: 2px solid #009039; color: #009039;
-  width: 50px; height: 50px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.3s ease; z-index: 20;
+    position: absolute; top: 50%; transform: translateY(-50%);
+    background: transparent; border: 2px solid #009039; color: #009039;
+    width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.3s ease; z-index: 20;
 }
 .slider-arrow:hover { background: #009039; color: #FFF; box-shadow: 0 0 15px rgba(0,144,57,0.6); }
 .slider-arrow.left { left: 0; } .slider-arrow.right { right: 0; }
 
-/* SEÇÃO DE ANÁLISE (CARDS GRANDES) */
+/* Análise Cards */
+
+.analise-list, .sebrae-list {
+    display: flex;
+    flex-direction: column;
+    gap: 80px; /* <--- ESPAÇAMENTO AUMENTADO PARA SEPARAR OS QUADROS */
+    width: 100%;
+}
+
 .analise-card, .sebrae-card {
     display: flex;
     flex-direction: row;
@@ -403,97 +350,63 @@ body.light-theme .sebrae-card {
     gap: 50px;
     padding: 40px;
     min-height: 440px;
-    
-    /* MUDANÇA AQUI: Adicione margem inferior para desgrudar um do outro */
-    margin-bottom: 40px !important; 
+    margin-bottom: 0; /* Controlado pelo gap do pai */
     
     background: rgba(30, 32, 36, 0.6);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
-
-.analise-content, .sebrae-info { flex: 1; min-width: 350px; display: flex; flex-direction: column; text-align: left; }
-
-.info-title { font-size: 22px; font-weight: 700; color: #FFF; margin-bottom: 10px; }
-
+.analise-content { flex: 1; min-width: 350px; display: flex; flex-direction: column; text-align: left; }
+.analise-content h3 { font-size: 22px; font-weight: 700; color: #FFF; margin-bottom: 10px; line-height: 1.2; }
 .tag-segmentacao {
     background-color: #333; color: #FFF; padding: 6px 16px; border-radius: 20px;
     font-size: 11px; font-weight: 600; text-transform: uppercase; margin-bottom: 20px; border: 1px solid #555; width: fit-content;
 }
-.info-description { color: var(--text-gray); font-size: 15px; line-height: 1.8; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
-
-.analise-chart, .sebrae-chart-wrapper {
+.analise-content p { color: var(--text-gray); font-size: 15px; line-height: 1.8; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+.analise-chart {
     flex: 1.5; height: 350px; width: 100%; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.2); border-radius: 12px;
+}
+
+.info-title, .analise-content h3 { font-size: 22px; font-weight: 700; color: #FFF; margin-bottom: 10px; line-height: 1.2; }
+.info-description, .analise-content p { color: var(--text-gray); font-size: 15px; line-height: 1.8; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+
+
+/* Coluna da Direita (Gráfico) */
+.analise-chart, .sebrae-chart-wrapper {
+    flex: 1.5; /* Ocupa 60% */
+    height: 350px;
+    width: 100%;
+    position: relative;
+    
+    /* Garante que o gráfico não vaze */
+    overflow: hidden;
+    min-width: 0; 
+    
     display: flex; align-items: center; justify-content: center;
     background: rgba(0,0,0,0.2); border-radius: 12px;
 }
 .sebrae-chart-wrapper canvas { max-width: 100%; max-height: 100%; }
 
-/* =======================================================================
-   REFINAMENTO INTERNO DA ANÁLISE DE DADOS (TEMA WHITE)
-   ======================================================================= */
-
-/* 1. Títulos dos Gráficos (Preto Forte) */
-body.light-theme .info-title,
-body.light-theme .analise-content h3 {
-    color: #000000 !important;
-    font-weight: 700;
+/* Coluna da Esquerda (Texto) */
+.analise-content, .sebrae-info {
+    flex: 1; /* Ocupa 40% */
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    text-align: left;
 }
 
-/* 2. Descrição e Linhas (Cinza Escuro) */
-body.light-theme .info-description,
-body.light-theme .analise-content p {
-    color: #333333 !important; /* Leitura confortável */
-    border-top: 1px solid rgba(0,0,0,0.1) !important; /* Linha de separação sutil */
-}
-
-body.light-theme .info-description strong {
-    color: #009039 !important; /* Destaque em verde escuro */
-}
-
-/* 3. Labels dos Filtros ("SELECIONE O ANO", etc) */
-body.light-theme .info-segmentation label {
-    color: #000000 !important;
-    font-weight: 700;
-    opacity: 0.7;
-}
-
-/* 4. O CRÍTICO: Os botões de Filtro (Selects) */
-/* Amarelo no branco não dá leitura. Vamos mudar para um estilo "Clean" */
-body.light-theme .chart-filter {
-    background-color: #F0F0F0 !important; /* Fundo cinza bem claro */
-    border: 1px solid #CCCCCC !important;  /* Borda cinza */
-    color: #1A1A1A !important;             /* Texto quase preto */
-}
-
-/* Hover no filtro (Fica verde ao passar o mouse) */
-body.light-theme .chart-filter:hover {
-    border-color: #009039 !important;
-    color: #009039 !important;
-    background-color: #FFFFFF !important;
-}
-
-/* 5. Fundo da área do gráfico (Onde fica o desenho) */
-body.light-theme .analise-chart,
-body.light-theme .sebrae-chart-wrapper {
-    /* Removemos o fundo escuro transparente e deixamos limpo */
-    background: transparent !important; 
-    
-    /* Opcional: Se quiser destacar a área do gráfico */
-    /* background: rgba(0,0,0,0.02) !important; */
-}
-
-/* FILTROS */
+/* Filtros */
 .filters-row { display: flex; gap: 15px; width: 100%; margin-bottom: 20px; }
-.chart-filter {
-    background: rgba(253, 200, 6, 0.05); border: 1px solid rgba(253, 200, 6, 0.2);
-    color: #FDC806; width: 100%; padding: 10px 12px; font-size: 11px; border-radius: 6px;
-    font-weight: 500; outline: none; cursor: pointer; transition: all 0.2s;
-}
+.info-segmentation { flex: 1; width: 100%; }
+.chart-filter { background: rgba(253, 200, 6, 0.05); border: 1px solid rgba(253, 200, 6, 0.2); color: #FDC806; width: 100%; padding: 10px 12px; font-size: 11px; border-radius: 6px; font-weight: 500; outline: none; cursor: pointer; transition: all 0.2s; }
 .chart-filter option { background: #1E2024; color: #FFF; }
 
-/* LOADERS */
+/* Loaders */
 .loader-container {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
@@ -512,115 +425,113 @@ body.light-theme .sebrae-chart-wrapper {
 .analise-card.is-loading .analise-content, .analise-card.is-loading .analise-chart { opacity: 0; }
 .analise-card.is-loaded .analise-content, .analise-card.is-loaded .analise-chart { opacity: 1; transition: opacity 0.8s ease-in; }
 
-/* =======================================================================
-   AJUSTE DO LOADER PARA O TEMA LIGHT (Visual Clean/Tecnológico)
-   ======================================================================= */
+/* Efeitos Especiais */
+body.high-contrast { 
+    --bg-body: #000000 !important;
+    --bg-card: #000000 !important;
+    --bg-header: #000000 !important;
+    --bg-menu: #000000 !important;
 
-/* 1. O Fundo do Loader (Overlay) */
-/* Sai o preto fosco, entra um branco translúcido limpo */
-body.light-theme .loader-container {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border: 1px solid rgba(0,0,0,0.05); /* Uma borda sutil para definir a área */
+    --text-primary: #FFFF00 !important;   /* Amarelo */
+    --text-secondary: #FFFFFF !important; /* Branco */
+    --border-color: #FFFF00 !important;
+    
+    --brand-green: #FFFF00 !important;
+    --brand-yellow: #FFFF00 !important;
+    --brand-blue: #FFFF00 !important;
+    
+    /* Remove gradientes coloridos */
+    --grad-start: #FFFF00 !important; 
+    --grad-mid: #000000 !important;   
+    --grad-end: #FFFF00 !important;
+
+
 }
 
-/* 2. O Anel Externo (Principal) */
-body.light-theme .tech-loader {
-    /* Muda de Verde Neon para o AZUL da marca (Fica mais sério/tech no branco) */
-    /* Se você tiver a variável --brand-blue definida, ele usará ela. Senão, usa o fallback #0056b3 */
-    border-top-color: var(--brand-blue, #0056b3) !important; 
-
-    /* Ajusta o "Brilho" (Glow) */
-    /* Removemos o brilho neon forte e trocamos por uma sombra azul suave e nítida */
-    box-shadow: 0 0 12px rgba(0, 86, 179, 0.25) !important; 
+/* Força bordas e fundos específicos no Alto Contraste */
+body.high-contrast header,
+body.high-contrast .kpi-card,
+body.high-contrast .painel-card,
+body.high-contrast .analise-card,
+body.high-contrast .sebrae-card,
+body.high-contrast .nav-menu {
+    background-color: #000000 !important;
+    border: 1px solid #FFFF00 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
 }
 
-/* 3. O Anel Interno (Secundário) */
-body.light-theme .tech-loader::before {
-    /* Muda de Amarelo para o VERDE da marca para criar contraste com o azul */
-    border-top-color: var(--brand-green, #009039) !important;
+body.high-contrast * {
+    text-shadow: none !important; /* Remove sombras de texto para legibilidade */
 }
 
-/* RODAPÉ */
+body.font-large { font-size: 110%; }
+body.reduce-motion *, body.reduce-motion *::before { animation: none !important; transition: none !important; }
+body.focus-visible *:focus { outline: 3px solid #FDC806 !important; outline-offset: 2px; }
+
+/* Footer */
 footer { background-color: white; color: #111; padding: 80px 0; border-top: 4px solid var(--grad-start); }
 .footer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
 .footer-col h3 { font-size: 16px; font-weight: 700; margin-bottom: 25px; text-transform: uppercase; }
 .footer-col ul li { list-style: none; margin-bottom: 12px; }
-.footer-col a { color: #555; text-decoration: none; font-size: 14px; }
+.footer-col a { color: #555; text-decoration: none; font-size: 14px; font-weight: 500; }
 .footer-col a:hover { color: #009039; }
 
 /* =======================================================================
-   6. RESPONSIVIDADE (MOBILE E TABLET)
+   NOVO: MODO ESCALA DE CINZA (PRETO E BRANCO)
    ======================================================================= */
 
-/* --- TABLET E MOBILE GERAL (Max 900px) --- */
+/* Usamos um pseudo-elemento para não afetar o 'position: fixed' do header */
+body.grayscale-mode::after {
+    content: "";
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    
+    /* A MÁGICA: Aplica cinza em tudo que está atrás */
+    backdrop-filter: grayscale(100%);
+    -webkit-backdrop-filter: grayscale(100%); /* Safari */
+    
+    /* Garante que o usuário consiga clicar no site através do filtro */
+    pointer-events: none; 
+    
+    /* Fica acima de tudo (inclusive do header z-index 1000) */
+    z-index: 2000; 
+}
+
+/* =======================================================================
+   6. RESPONSIVIDADE (MOBILE)
+   ======================================================================= */
 @media (max-width: 900px) {
-    
-    /* Header Compacto */
     header { height: 90px !important; padding: 0 15px; }
+    .logo-left { gap: 10px; } .logo-left img { height: 45px; } .logo-right { display: none; }
     
-    /* Logos Menores */
-    .logo-left { gap: 10px; }
-    .logo-left img { height: 45px; }
-    .logo-right { display: none; } /* Esconde logo direita no mobile */
+    .mobile-menu-btn { display: block; position: absolute; right: 20px; top: 50%; transform: translateY(-50%); }
     
-    /* Ajuste Botão Tema */
-    .theme-btn { width: 38px; height: 20px; }
-    .theme-btn i { font-size: 10px; width: 14px; height: 14px; }
-    body.light-theme .theme-btn i { left: calc(100% - 17px); }
-
-    /* Exibe Botão Menu */
-    .mobile-menu-btn { 
-        display: block; 
-        position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
-    }
-
-    /* MENU MOBILE (Estilo Gaveta Lateral) */
     .nav-menu {
-        position: fixed !important;
-        top: 0; right: -100%; left: auto;
-        width: 70%; height: 100vh;
-        transform: none !important;
-        
-        background: rgba(0, 0, 0, 0.98) !important; /* Fundo Preto Sempre */
-        backdrop-filter: blur(15px) !important;
-        
+        position: fixed !important; top: 0; right: -100%; left: auto;
+        width: 70%; height: 100vh; transform: none !important;
+        background: rgba(0, 0, 0, 0.98) !important; backdrop-filter: blur(15px) !important;
         display: flex !important; flex-direction: column; align-items: center;
-        padding-top: 100px;
-        transition: right 0.4s ease;
-        z-index: 1005; 
-        border-left: 1px solid rgba(255,255,255,0.1);
-        box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+        padding-top: 100px; transition: right 0.4s ease; z-index: 1005; 
+        border-left: 1px solid rgba(255,255,255,0.1); box-shadow: -10px 0 30px rgba(0,0,0,0.8);
     }
-    
-    /* Menu Aberto */
     .nav-menu.active { right: 0; }
-    
-    /* Lista Vertical */
     .nav-menu ul { flex-direction: column; gap: 25px; }
     .nav-menu a { font-size: 18px; padding: 10px; display: block; color: white !important; }
-
-    /* Ajuste Tema Claro no Mobile */
-    body.light-theme .nav-menu {
-        background: rgba(255, 255, 255, 0.98) !important;
-        border-left: 1px solid rgba(0,0,0,0.1);
-    }
+    
+    /* Tema Claro no Mobile */
+    body.light-theme .nav-menu { background: rgba(255, 255, 255, 0.98) !important; }
     body.light-theme .nav-menu a { color: #1A1A1A !important; }
 
-    /* Grid de KPIs (1 Coluna) */
     .kpi-grid { grid-template-columns: 1fr; gap: 15px; margin-top: 30px; padding: 0 20px; }
     .kpi-card { width: 100%; max-width: 100%; }
-
-    /* Slider Compacto */
     .paineis-grid { gap: 15px; padding: 10px 15px 40px; }
     .painel-card { min-width: 260px; max-width: 85vw; height: auto; min-height: 300px; padding: 15px; }
-    .painel-title { font-size: 16px; margin-bottom: 10px; }
-    .painel-card img { max-height: 150px !important; margin-bottom: 10px; }
-    
-    /* Cards de Análise */
     .analise-card, .sebrae-card { flex-direction: column; padding: 20px; height: auto; gap: 30px; }
-    .analise-content, .sebrae-info { width: 100%; min-width: auto; }
-    .analise-chart, .sebrae-chart-wrapper { height: 250px; width: 100%; }
-    .filters-row { flex-direction: column; gap: 10px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 30px; }
 }
 
 /* --- MOBILE PEQUENO (Max 768px) --- */
