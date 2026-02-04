@@ -31,39 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* =======================================================================
-   3. SISTEMA DE TEMA (GLOBAL)
-   ======================================================================= */
-function initThemeSystem() {
-    const body = document.body;
-    
-    // --- FUNÇÃO GLOBAL: Permite que o menu de acessibilidade troque o tema ---
-    window.toggleSiteTheme = function() {
-        // 1. Troca a classe no body
-        body.classList.toggle('light-theme');
-        const isLight = body.classList.contains('light-theme');
-        
-        // 2. Salva na memória
-        localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
-        
-        // 3. Atualiza os Gráficos
-        if (typeof updateChartsTheme === 'function') updateChartsTheme(isLight);
-        if (typeof fixChartPop === 'function') fixChartPop(isLight);
-    };
-
-    // --- CARREGAMENTO INICIAL ---
-    const savedTheme = localStorage.getItem('site_theme');
-    if (savedTheme === 'light') {
-        body.classList.add('light-theme');
-        
-        // Delay para garantir que gráficos existam antes de pintar
-        setTimeout(() => {
-            if (typeof updateChartsTheme === 'function') updateChartsTheme(true);
-            if (typeof fixChartPop === 'function') fixChartPop(true);
-        }, 500);
-    }
-}
-
-/* =======================================================================
    4. FUNÇÕES DE GRÁFICOS
    ======================================================================= */
 function createChart(id, type, data, extraOptions = {}) {
@@ -277,32 +244,6 @@ function initAllCharts() {
         }]
     }, { scales: { y: { type: 'logarithmic' } } });
 }
-
-// Helper: Cria Gráfico com Verificação e Armazenamento
-function createChart(id, type, data, extraOptions = {}) {
-    const ctx = document.getElementById(id);
-    if (!ctx) return;
-    
-    // Cria o gráfico
-    const newChart = new Chart(ctx, {
-        type: type,
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            ...extraOptions
-        }
-    });
-
-    // --- CORREÇÃO: Salva o gráfico na lista para podermos mudar a cor depois ---
-    if (typeof chartInstances !== 'undefined') {
-        chartInstances.push(newChart);
-    }
-
-    return newChart;
-}
-
 
 // Helper: Cria Gradiente
 function createGradient(context, color) {

@@ -378,45 +378,39 @@ function createChart(id, type, data, options = {}) {
    SISTEMA DE TEMA (DARK / WHITE)
    ======================================================================= */
 
+// Substitua sua initThemeSystem por esta:
 function initThemeSystem() {
-    const themeBtn = document.getElementById('theme-toggle');
     const body = document.body;
-    const themeIcon = themeBtn ? themeBtn.querySelector('i') : null;
+    
+    // 1. Inicializa o Menu e Funções do arquivo acessibilidade.js
+    if (typeof initAccessibilityMenu === 'function') initAccessibilityMenu();
+    if (typeof initAccessibilityFeatures === 'function') initAccessibilityFeatures();
 
-    // --- CORREÇÃO DA LÓGICA DO ÍCONE ---
-    function updateButtonState(isLight) {
-        if (!themeIcon) return;
-        
-        // Se está CLARO (Light) -> Mostra a LUA (fa-moon) para ir pro escuro
-        // Se está ESCURO (Dark)  -> Mostra o SOL (fa-sun) para ir pro claro
-        if (isLight) {
-            themeIcon.className = 'fas fa-moon';
-        } else {
-            themeIcon.className = 'fas fa-sun';
-        }
+    // 2. Sincronização com os Gráficos da Educação
+    const themeCheckbox = document.getElementById('toggle-theme');
+    
+    // Função para alternar o tema manualmente se necessário
+    window.toggleSiteTheme = function() {
+        body.classList.toggle('light-theme');
+        const isLight = body.classList.contains('light-theme');
+        localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
+        updateChartsTheme(isLight);
+    };
+
+    // Ouvinte para o checkbox de acessibilidade
+    if (themeCheckbox) {
+        themeCheckbox.addEventListener('change', () => {
+            if (themeCheckbox.checked !== body.classList.contains('light-theme')) {
+                window.toggleSiteTheme();
+            }
+        });
     }
 
-    // Carrega tema salvo
+    // Carregamento Inicial
     const savedTheme = localStorage.getItem('site_theme');
     if (savedTheme === 'light') {
         body.classList.add('light-theme');
-        updateButtonState(true);
-        setTimeout(() => updateChartsTheme(true), 500); 
-    } else {
-        // Garante que o ícone comece certo no tema escuro
-        updateButtonState(false);
-    }
-
-    // Clique do Botão
-    if (themeBtn) {
-        themeBtn.addEventListener('click', () => {
-            body.classList.toggle('light-theme');
-            const isLight = body.classList.contains('light-theme');
-            
-            localStorage.setItem('site_theme', isLight ? 'light' : 'dark');
-            updateButtonState(isLight);
-            updateChartsTheme(isLight); 
-        });
+        setTimeout(() => updateChartsTheme(true), 600);
     }
 }
 

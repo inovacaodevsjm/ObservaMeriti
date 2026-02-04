@@ -73,8 +73,9 @@ header {
 /* Container que segura a Logo e o Botão */
 .logo-left {
     display: flex;
-    align-items: flex-start;
-    gap: 15px; /* Espaço entre a logo e o botão */
+    align-items: center; /* Alinha verticalmente a logo e o botão */
+    gap: 15px;           /* Distância entre a logo e o botão */
+    z-index: 1010;       /* Mantém acima do fundo mas abaixo do menu mobile */
 }
 
 /* Força a Logo a ser o PRIMEIRO item */
@@ -106,6 +107,10 @@ header {
     max-height: 90px; 
 }
 
+/* Reset de ordens antigas que podem conflitar */
+.logo-left a { order: 1; }
+.accessibility-wrapper { order: 2; }
+
 .logo-right img { 
     height: 90px; /* Sua logo grande */
     width: auto; 
@@ -114,6 +119,10 @@ header {
     /* TRUQUE: Se a logo for muito grande, ela não estica o header */
     /* Ela vai ficar centralizada verticalmente */
     max-height: 120px; 
+}
+
+.logo-right {
+    z-index: 1010;
 }
 
 /* Menu Desktop */
@@ -137,6 +146,16 @@ header {
 
 .nav-menu a:hover { color: #FDC806; }
 
+.accessibility-btn {
+    order: 3; /* Garante que fique à direita no mobile */
+    margin-left: 15px;
+}
+
+/* Garante que o menu de acessibilidade fique por cima de tudo */
+.accessibility-menu {
+    z-index: 10001;
+}
+
 /* Botão Mobile (Escondido no Desktop) */
 .mobile-menu-btn {
     display: none;
@@ -146,6 +165,13 @@ header {
     border: none;
     cursor: pointer;
     z-index: 1002;
+}
+
+/* Ajuste específico para o Botão de Acessibilidade ao lado da logo */
+.accessibility-wrapper {
+    margin: 0; 
+    display: flex;
+    align-items: center;
 }
 
 
@@ -228,7 +254,12 @@ header {
 
 /* --- 4. ESTRUTURA DOS GRÁFICOS --- */
 .section-charts { margin-top: 50px; margin-bottom: 100px; }
-.sebrae-list { display: flex; flex-direction: column; gap: 5px; }
+.sebrae-list { 
+    display: flex;
+    flex-direction: column;
+    gap: 40px; /* Aumente este valor conforme necessário */
+    width: 100%;
+}
 
 .sebrae-card {
     display: flex; flex-direction: row; align-items: stretch; justify-content: space-between;
@@ -449,7 +480,7 @@ body.light-theme .theme-btn i {
         background: rgba(0, 0, 0, 0.98); /* Fundo bem escuro */
         backdrop-filter: blur(15px);
         
-        display: flex;
+        display: block;
         flex-direction: column;
         align-items: center;
         padding-top: 100px; /* Espaço para não ficar em cima do X */
@@ -460,6 +491,7 @@ body.light-theme .theme-btn i {
         z-index: 1005; 
         border-left: 1px solid rgba(255,255,255,0.1);
         box-shadow: -10px 0 30px rgba(0,0,0,0.8);
+        transform: none;
     }
 
     /* Quando o menu abre */
@@ -511,12 +543,9 @@ body.light-theme .theme-btn i {
     /* Ajuste para centralizar a Logo Esquerda já que a direita sumiu */
     .header-flex {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-between; /* Espaça Esquerda, Centro e Direita */
         align-items: center;
-        width: 100%;
-    
-        /* ADICIONE ESTA LINHA: */
-        position: relative; 
+        position: relative; /* Importante para o menu centralizado */
 }
     
     .nav-menu {

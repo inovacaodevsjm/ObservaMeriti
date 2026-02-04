@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="../../style.css">
     <link rel="stylesheet" href="educacao.css">
     <script src="educacao.js" defer></script>
+    <link rel="stylesheet" href="../../acessibilidade.css">
+    <script src="../../acessibilidade.js" defer></script>
     
 </head>
 <body>
@@ -23,15 +25,28 @@
     <header>
         <div class="container header-flex">
             
+            <!-- ÁREA ESQUERDA: LOGO + BOTÃO ACESSIBILIDADE -->
             <div class="logo-left">
-                <a href="../../index.html">
+                <a href="#"> <!-- Link para Home -->
                     <img class="img-dark-theme" src="../../assets/img/logo-horizontal-white.png" alt="Prefeitura SJM">
                     <img class="img-light-theme" src="../../assets/img/logo-horizontal-colorida.png" alt="Prefeitura SJM Light">
                 </a>
 
-                <button id="theme-toggle" class="theme-btn" aria-label="Alternar Tema">
-                    <i class="fas fa-sun"></i>
-                </button>
+                <!-- O BOTÃO AGORA MORA AQUI -->
+                <div class="accessibility-wrapper">
+                    <button id="accessibility-toggle" class="accessibility-btn" aria-label="Acessibilidade" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-universal-access"></i>
+                    </button>
+
+                    <div id="accessibility-menu" class="accessibility-menu" role="menu" aria-hidden="true">
+                        <div class="accessibility-item"><label><span class="description">Dark / Ligth</span><input type="checkbox" id="toggle-theme"><span class="slider"></span></label></div>
+                        <div class="accessibility-item"><label><span class="description">Alto Contraste</span><input type="checkbox" id="toggle-contrast"><span class="slider"></span></label></div>
+                        <div class="accessibility-item"><label><span class="description">Aumentar Fonte</span><input type="checkbox" id="toggle-font"><span class="slider"></span></label></div>
+                        <div class="accessibility-item"><label><span class="description">Reduzir Movimento</span><input type="checkbox" id="toggle-motion"><span class="slider"></span></label></div>
+                        <div class="accessibility-item"><label><span class="description">Destaque de Foco</span><input type="checkbox" id="toggle-focus"><span class="slider"></span></label></div>
+                        <div class="accessibility-item"><label><span class="description">Preto e Branco</span><input type="checkbox" id="toggle-grayscale"><span class="slider"></span></label></div>
+                    </div>
+                </div>
             </div>
 
             <button class="mobile-menu-btn" onclick="toggleMenu()"> ☰ </button>
@@ -47,7 +62,7 @@
                 </ul>
             </nav>
             <div class="logo-right">
-                <img class="img-dark-theme" src="../../assets/img/logo-horizontal-white.png" alt="Prefeitura SJM">
+                <img class="img-dark-theme" src="../../assets/img/logo-sjm-box.png" alt="Prefeitura SJM">
                 <img class="img-light-theme" src="../../assets/img/logo-vertical-colorida.png" alt="Prefeitura SJM Light">
                 
             </div>
