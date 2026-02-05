@@ -1,67 +1,5 @@
-/* =======================================================================
-   EDUCACAO.CSS - VERSÃO FINAL RESPONSIVA (DESKTOP/TABLET/MOBILE)
-   ======================================================================= */
-
-
-header {
-  background-color: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(10px);
-  
-  /* TRAVA A ALTURA DA FAIXA PRETA */
-  height: 130px !important;       /* Força a altura exata */
-  max-height: 130px !important;   /* Impede que cresça */
-  overflow: visible;              /* Permite que a logo "vaze" se for maior, sem esticar a faixa */
-  
-  /* REMOVE ESPAÇAMENTOS EXTRAS */
-  padding: 0;
-  margin: 0;
-  border-bottom: none;
-  
-  /* POSICIONAMENTO */
-  position: fixed;
-  top: 4px;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-  
-  /* ALINHAMENTO */
-  display: flex;
-  align-items: center; 
-}
-
-/* O container interno também precisa respeitar a altura */
-.header-flex {
-    height: 100%;       /* Ocupa exatamente os 130px */
-    max-height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    max-width: 1280px;
-    margin: 0 auto;
-    position: relative;
-}
-
-.header-right-controls {
-    margin-left: auto; /* Empurra para a direita se estiver flex */
-    /* Se o menu estiver no meio, pode precisar ajustar a ordem visual com 'order' */
-}
-
-/* Container que segura a Logo e o Botão */
-.logo-left {
-    display: flex;
-    align-items: center; /* Alinha verticalmente a logo e o botão */
-    gap: 15px;           /* Distância entre a logo e o botão */
-    z-index: 1010;       /* Mantém acima do fundo mas abaixo do menu mobile */
-}
-
-/* Força a Logo a ser o PRIMEIRO item */
 .logo-left a {
     order: 1;
-}
-
-.logo-left .theme-btn {
-    margin-top: 5px; /* Desce um pouquinho para alinhar com o topo do texto da logo */
 }
 
 /* Força o Botão de Tema a ser o SEGUNDO item (lado direito da logo) */
@@ -84,17 +22,11 @@ header {
     max-height: 90px; 
 }
 
-/* Reset de ordens antigas que podem conflitar */
-.logo-left a { order: 1; }
-.accessibility-wrapper { order: 2; }
 
 .logo-right img { 
     height: 90px; /* Sua logo grande */
     width: auto; 
     display: block;
-    
-    /* TRUQUE: Se a logo for muito grande, ela não estica o header */
-    /* Ela vai ficar centralizada verticalmente */
     max-height: 120px; 
 }
 
@@ -103,35 +35,15 @@ header {
 }
 
 /* Menu Desktop */
-.nav-menu ul {
-  display: flex;
-  gap: 30px;
-  list-style: none;
-  margin: 0; padding: 0;
-}
-
-.nav-menu a {
-    color: #FFF; 
-    text-decoration: none; 
-    font-size: 18px; 
-    font-weight: 300;
-    transition: color 0.3s;
-    
-    /* ADICIONE ISSO: Impede que o texto quebre de linha */
-    white-space: nowrap; 
-}
-
-.nav-menu a:hover { color: #FDC806; }
-
 .accessibility-btn {
-    order: 3; /* Garante que fique à direita no mobile */
-    margin-left: 15px;
+    margin-left: 20px;
 }
 
 /* Garante que o menu de acessibilidade fique por cima de tudo */
 .accessibility-menu {
     z-index: 10001;
 }
+
 
 /* Botão Mobile (Escondido no Desktop) */
 .mobile-menu-btn {
@@ -152,30 +64,6 @@ header {
 }
 
 
-/* --- 5. HERO SECTION --- */
-.hero {
-  position: relative;
-  min-height: 600px;
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  text-align: center;
-  margin-top: 0;
-  
-  padding-top: 200px; 
-  
-  /* MUDANÇA AQUI: Diminuí de 60px para 20px */
-  padding-bottom: 20px; 
-  
-  background: 
-    linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.9)),
-    url('../../assets/img/Imagem do Topo do site.png'); 
-  
-  background-size: cover;
-  background-position: center top; 
-  background-repeat: no-repeat;
-}
-
 /* --- 3. SEÇÃO DE KPIS (PANORAMA) --- */
 .panorama-section {
     /* MUDANÇA AQUI: O primeiro valor (padding-top) foi para 0 */
@@ -192,25 +80,11 @@ header {
     display: flex; 
     flex-wrap: wrap; 
     justify-content: center; 
-    
-    gap: 10px; /* <--- MUDE DE 20px PARA 10px */
-    
+    gap: 10px; 
     padding: 0 20px; 
     width: 100%; 
     max-width: 1200px; 
     margin: 0 auto;
-}
-
-.kpi-card {
-    background: rgba(30, 32, 36, 0.6); backdrop-filter: blur(10px);
-    padding: 25px; border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center;
-    
-    /* Responsividade Flexbox */
-    flex: 1 1 220px; /* Cresce, encolhe, base 220px */
-    max-width: 280px; min-width: 150px; min-height: 150px;
-    transition: transform 0.3s ease;
 }
 
 .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
@@ -231,6 +105,7 @@ header {
 
 /* --- 4. ESTRUTURA DOS GRÁFICOS --- */
 .section-charts { margin-top: 50px; margin-bottom: 100px; }
+
 .sebrae-list { 
     display: flex;
     flex-direction: column;
@@ -239,8 +114,12 @@ header {
 }
 
 .sebrae-card {
-    display: flex; flex-direction: row; align-items: stretch; justify-content: space-between;
-    gap: 40px; padding: 40px; min-height: 440px;
+    display: flex; 
+    flex-direction: row; 
+    align-items: stretch; 
+    justify-content: space-between;
+    gap: 40px; padding: 40px; 
+    min-height: 440px;
     background: rgba(30, 32, 36, 0.6); border-radius: 16px;
     border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px);
 }
