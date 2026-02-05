@@ -56,3 +56,22 @@ DATA DA TENTATIVA: 05/02/2026 11:57:43,59
 [SUCESSO] Sincronização concluída. 
 Fim do processo. 
 -------------------------------------------------- 
+-------------------------------------------------- 
+DATA DA TENTATIVA: 05/02/2026 12:49:45,41 
+📡 Iniciando sincronização... 
+🔍 Iniciando Verificação Automática em Todas as Bases...
+📡 Verificando: SIDRA/IBGE (Educação)...
+⚠️ SIDRA/IBGE (Educação) indisponível (Erro 500)
+📡 Verificando: Dados.gov.br (INEP/IDEB)...
+⚠️ Dados.gov.br (INEP/IDEB) indisponível (Erro 400)
+📡 Verificando: QEdu/Portal Transparência (Referência)...
+⚠️ QEdu/Portal Transparência (Referência) indisponível (Erro 403)
+📡 Verificando: API Localidades (Estrutura)...
+✅ Conexão estabelecida com API Localidades (Estrutura)
+--------------------------------------------------
+🚀 Sincronização Concluída com Sucesso Híbrido!
+📊 Dados de SJM (IDEB 4.9 / Distorção 18%) Preservados.
+--------------------------------------------------
+[SUCESSO] Sincronização concluída. 
+Fim do processo. 
+-------------------------------------------------- 

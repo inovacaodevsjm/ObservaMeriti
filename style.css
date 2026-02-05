@@ -311,6 +311,26 @@ body.light-theme .description { color: #333; }
     pointer-events: none; z-index: -1;
 }
 
+.status-banner {
+    padding: 4px 12px;        /* Reduzido de 10px 20px */
+    border-radius: 4px;       /* Bordas mais sutis */
+    font-size: 8px;          /* Reduzido de 13px */
+    margin-bottom: 10px;      /* Reduzido de 30px */
+    display: inline-flex;     /* Ajusta ao tamanho do texto em vez de ocupar a linha toda */
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 500;
+    text-transform: uppercase; /* Melhora a leitura em tamanhos pequenos */
+    letter-spacing: 0.5px;
+}
+
+
+
+.status-warning { border-left: 2px solid #FDC806; color: #FDC806; }
+.status-success { border-left: 2px solid #009039; color: #009039; }
+
 /* Slider */
 .slider-container { position: relative; width: 100%; padding: 0 60px; }
 .paineis-grid { display: flex; gap: 30px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 10px 50px 10px; scrollbar-width: none; }

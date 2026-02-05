@@ -50,35 +50,65 @@ async function fetchSidraData(url) {
 
 /* --- MOTOR DE INICIALIZAÇÃO COM LOADER TECNOLÓGICO --- */
 async function initAllCharts() {
-    console.log("🚀 Iniciando Painel via JSON Local...");
+    const cards = document.querySelectorAll('.sebrae-card, .analise-card');
+    const banners = document.querySelectorAll('.status-banner');
     
-    const cards = document.querySelectorAll('.analise-card');
-    cards.forEach(card => card.classList.add('is-loading'));
+    // --- RESTAURA O CARREGAMENTO TECNOLÓGICO (IGUAL AO INDEX) ---
+    cards.forEach(card => {
+        card.classList.add('is-loading');
+        // Cria o container do loader se ele não existir
+        if (!card.querySelector('.loader-container')) {
+            const loader = document.createElement('div');
+            loader.className = 'loader-container';
+            loader.innerHTML = '<div class="tech-loader"></div>';
+            card.appendChild(loader);
+        }
+    });
 
     try {
-        const response = await fetch('./dados_educacao.json'); 
-        if (!response.ok) throw new Error("Arquivo JSON não encontrado");
+        const response = await fetch('./dados_educacao.json');
+        if (!response.ok) throw new Error("Erro ao carregar JSON");
         const bd = await response.json();
 
-        // RENDERIZAÇÃO DOS GRÁFICOS
+        // Renderiza os dados por trás do loader
         renderIdebLocal(bd.ideb_iniciais, bd.ideb_finais);
-        renderEvolucaoMatriculasLocal(bd.matriculas || FALLBACK_DATA.matriculas);
         renderTaxasLocal(bd.taxa_distorcao, bd.taxa_abandono);
-        
-        // --- ADICIONE ESTA LINHA ABAIXO PARA O GRÁFICO APARECER ---
         renderMatriculasPorNivel(bd.mat_infantil, bd.mat_fundamental);
-        // ---------------------------------------------------------
+        if (typeof renderEvolucaoMatriculasLocal === "function") {
+            renderEvolucaoMatriculasLocal(bd.matriculas || FALLBACK_DATA.matriculas);
+        }
 
+        // --- SIMULAÇÃO DE VERIFICAÇÃO (2 SEGUNDOS) ---
         setTimeout(() => {
-            document.querySelectorAll('.loader-container').forEach(l => l.remove());
-            cards.forEach(c => {
-                c.classList.remove('is-loading');
-                c.classList.add('is-loaded');
+            const sidraStatus = bd.status_das_fontes?.find(s => s.includes("SIDRA/IBGE"));
+            const isOffline = sidraStatus && sidraStatus.includes("Offline");
+
+            // 1. Atualiza os Banners
+            banners.forEach(banner => {
+                const statusText = banner.querySelector('span');
+                banner.classList.remove('status-loading');
+
+                if (isOffline) {
+                    statusText.innerText = `FONTE: SIDRA/IBGE (INSTÁVEL) - USANDO BASE LOCAL PROTEGIDA (${bd.ultima_sincronizacao})`;
+                    banner.classList.add('status-warning');
+                } else {
+                    statusText.innerText = `DADOS SINCRONIZADOS VIA ${bd.fonte_origem} EM ${bd.ultima_sincronizacao}`;
+                    banner.classList.add('status-success');
+                }
             });
-        }, 800);
+
+            // 2. Remove os Loaders Tecnológicos e revela os gráficos
+            document.querySelectorAll('.loader-container').forEach(l => l.remove());
+            cards.forEach(card => {
+                card.classList.remove('is-loading');
+                card.classList.add('is-loaded');
+            });
+        }, 2000);
 
     } catch (error) {
-        console.error("❌ Erro ao carregar dados locais:", error);
+        console.error("Erro ao inicializar painel:", error);
+        // Em caso de erro, remove os loaders para não travar a tela
+        document.querySelectorAll('.loader-container').forEach(l => l.remove());
     }
 }
 
