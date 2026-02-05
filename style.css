@@ -269,12 +269,30 @@ body.light-theme .description { color: #333; }
 
 /* Linha Neon */
 .top-gradient-line {
-    height: 5px; width: 100%;
-    background: linear-gradient(45deg, #009039, #FDC806, #0000A8, #009039);
-    background-size: 300% 300%; position: fixed; top: 0; left: 0; z-index: 9999;
-    animation: gradientFlow 6s ease infinite; box-shadow: 0 1px 10px rgba(0, 144, 57, 0.4);
+    height: 4px; 
+    width: 100%;
+    /* Adicionamos a cor inicial no final para o loop ser imperceptível */
+    background: linear-gradient(90deg, #009039, #FDC806, #0000A8, #009039);
+    /* Aumentamos o tamanho para 200% para que a animação tenha "espaço" para correr */
+    background-size: 200% 100%; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    z-index: 9999;
+    /* 3 segundos é um tempo ideal para suavidade; 'linear' garante velocidade constante */
+    animation: gradientMove 3s linear infinite; 
+    box-shadow: 0 1px 10px rgba(0, 144, 57, 0.3);
 }
-@keyframes gradientFlow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 0%;
+    }
+    100% {
+        /* Movemos 200% para que o gradiente complete o ciclo exato */
+        background-position: -200% 0%;
+    }
+}
 
 /* Hero */
 .hero {

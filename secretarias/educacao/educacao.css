@@ -2,30 +2,7 @@
    EDUCACAO.CSS - VERSÃO FINAL RESPONSIVA (DESKTOP/TABLET/MOBILE)
    ======================================================================= */
 
-/* --- 1. HEADER & TOPO --- */
 
-/* Linha Neon */
-.top-gradient-line {
-    height: 5px; width: 100%;
-    background: linear-gradient(45deg, #009039, #FDC806, #0000A8, #009039);
-    background-size: 300% 300%;
-    position: fixed; top: 0; left: 0; z-index: 9999;
-    animation: gradientFlow 6s ease infinite;
-    box-shadow: 0 1px 10px rgba(0, 144, 57, 0.4);
-}
-
-@keyframes gradientFlow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-:root {
-    --brand-yellow: #FDC806; /* Amarelo da Marca */
-}
-
-/* =======================================================================
-   HEADER FIXO (TRAVADO EM 130PX)
-   ======================================================================= */
 header {
   background-color: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(10px);
