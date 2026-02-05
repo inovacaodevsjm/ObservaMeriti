@@ -145,6 +145,39 @@ function renderEvolucaoMatriculasLocal(dMat) {
     });
 }
 
+// Função que realiza o cálculo da subida do número
+function animateValue(obj, start, end, duration) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        
+        // Efeito de desaceleração para ficar mais suave
+        const currentVal = Math.floor(progress * (end - start) + start);
+        
+        // Formata com pontos de milhar (ex: 25.181)
+        obj.innerHTML = currentVal.toLocaleString('pt-BR');
+        
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        } else {
+            obj.innerHTML = end.toLocaleString('pt-BR');
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+
+// Função que localiza os números e dispara a contagem
+function initKpiCounters() {
+    const numbers = document.querySelectorAll('.count-up');
+    numbers.forEach(el => {
+        const target = parseFloat(el.getAttribute('data-target'));
+        if (!isNaN(target)) {
+            animateValue(el, 0, target, 2000); // 2000ms = 2 segundos de duração
+        }
+    });
+}
+
 /* Nova função para o gráfico de Matrículas por Nível */
 function renderMatriculasPorNivel(dInf, dFund) {
     // Se os dados não existirem no JSON, usa o Fallback de segurança
@@ -310,13 +343,6 @@ async function initDistribGeralNovo() {
     createChart('chartDistribGeral', 'bar', {
         labels: dInf.labels,
         datasets: [{ label: 'Matrículas', data: dInf.values, backgroundColor: COLORS.green, borderRadius: 4 }]
-    });
-}
-
-function initKpiCounters() {
-    document.querySelectorAll('.count-up').forEach(counter => {
-        const target = +counter.getAttribute('data-target');
-        counter.innerText = target.toLocaleString('pt-BR');
     });
 }
 
