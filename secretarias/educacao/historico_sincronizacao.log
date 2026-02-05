@@ -1,0 +1,58 @@
+-------------------------------------------------- 
+DATA DA TENTATIVA: 05/02/2026 11:40:17,14 
+📡 Iniciando sincronização... 
+📡 Tentando conectar ao SIDRA (ES Module Mode)...
+❌ FALHA: SIDRA retornou Erro 500. Seus dados locais foram protegidos.
+[SUCESSO] Sincronização concluída. 
+Fim do processo. 
+-------------------------------------------------- 
+-------------------------------------------------- 
+DATA DA TENTATIVA: 05/02/2026 11:40:35,61 
+📡 Iniciando sincronização... 
+📡 Tentando conectar ao SIDRA (ES Module Mode)...
+❌ FALHA: SIDRA retornou Erro 500. Seus dados locais foram protegidos.
+[SUCESSO] Sincronização concluída. 
+Fim do processo. 
+-------------------------------------------------- 
+-------------------------------------------------- 
+DATA DA TENTATIVA: 05/02/2026 11:52:25,41 
+📡 Iniciando sincronização... 
+🚀 Iniciando busca multi-fonte para o ObservaMeriti...
+📡 Tentando SIDRA (Principal)...
+⚠️ SIDRA (Principal) falhou (Status: 500).
+📡 Tentando Dados.gov.br (Reserva)...
+⚠️ Dados.gov.br (Reserva) falhou (Status: 400).
+📡 Tentando API Localidades (Validação)...
+✅ SUCESSO via API Localidades (Validação)! Arquivo local atualizado.
+[SUCESSO] Sincronização concluída. 
+Fim do processo. 
+-------------------------------------------------- 
+-------------------------------------------------- 
+DATA DA TENTATIVA: 05/02/2026 11:54:54,47 
+📡 Iniciando sincronização... 
+🚀 Iniciando Sincronização Híbrida...
+⚠️ Falha em SIDRA_IDEB. Mantendo base de segurança.
+⚠️ Falha em SIDRA_TAXAS. Mantendo base de segurança.
+✅ Processo concluído. Seus dados de 2023/2024 foram preservados!
+[SUCESSO] Sincronização concluída. 
+Fim do processo. 
+-------------------------------------------------- 
+-------------------------------------------------- 
+DATA DA TENTATIVA: 05/02/2026 11:57:43,59 
+📡 Iniciando sincronização... 
+🔍 Iniciando Verificação Automática em Todas as Bases...
+📡 Verificando: SIDRA/IBGE (Educação)...
+⚠️ SIDRA/IBGE (Educação) indisponível (Erro 500)
+📡 Verificando: Dados.gov.br (INEP/IDEB)...
+⚠️ Dados.gov.br (INEP/IDEB) indisponível (Erro 400)
+📡 Verificando: QEdu/Portal Transparência (Referência)...
+⚠️ QEdu/Portal Transparência (Referência) indisponível (Erro 403)
+📡 Verificando: API Localidades (Estrutura)...
+✅ Conexão estabelecida com API Localidades (Estrutura)
+--------------------------------------------------
+🚀 Sincronização Concluída com Sucesso Híbrido!
+📊 Dados de SJM (IDEB 4.9 / Distorção 18%) Preservados.
+--------------------------------------------------
+[SUCESSO] Sincronização concluída. 
+Fim do processo. 
+-------------------------------------------------- 

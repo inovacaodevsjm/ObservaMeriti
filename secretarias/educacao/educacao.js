@@ -50,46 +50,102 @@ async function fetchSidraData(url) {
 
 /* --- MOTOR DE INICIALIZAÇÃO COM LOADER TECNOLÓGICO --- */
 async function initAllCharts() {
-    console.log("🚀 Iniciando Painel com Loader...");
+    console.log("🚀 Iniciando Painel via JSON Local...");
     
-    // 1. Prepara os cards e injeta o loader visual
     const cards = document.querySelectorAll('.analise-card');
-    cards.forEach(card => {
-        card.classList.add('is-loading');
-        // Garante que o HTML do loader exista dentro do card
-        if (!card.querySelector('.loader-container')) {
-            const loader = document.createElement('div');
-            loader.className = 'loader-container';
-            loader.innerHTML = '<div class="tech-loader"></div>';
-            card.appendChild(loader);
-        }
-    });
+    cards.forEach(card => card.classList.add('is-loading'));
 
     try {
-        // 2. Carrega todos os seus gráficos existentes
-        await initIdebChart();
-        await initEvolucaoMatriculas();
-        await initTaxasChart();
-        await initMatriculasNivelChart();
-        await initDistribGeralNovo();
+        const response = await fetch('./dados_educacao.json'); 
+        if (!response.ok) throw new Error("Arquivo JSON não encontrado");
+        const bd = await response.json();
 
-        // 3. Finaliza o carregamento com transição suave
+        // RENDERIZAÇÃO DOS GRÁFICOS
+        renderIdebLocal(bd.ideb_iniciais, bd.ideb_finais);
+        renderEvolucaoMatriculasLocal(bd.matriculas || FALLBACK_DATA.matriculas);
+        renderTaxasLocal(bd.taxa_distorcao, bd.taxa_abandono);
+        
+        // --- ADICIONE ESTA LINHA ABAIXO PARA O GRÁFICO APARECER ---
+        renderMatriculasPorNivel(bd.mat_infantil, bd.mat_fundamental);
+        // ---------------------------------------------------------
+
         setTimeout(() => {
-            document.querySelectorAll('.loader-container').forEach(l => {
-                l.style.opacity = '0';
-                setTimeout(() => l.remove(), 500);
-            });
-
+            document.querySelectorAll('.loader-container').forEach(l => l.remove());
             cards.forEach(c => {
                 c.classList.remove('is-loading');
-                c.classList.add('is-loaded'); // Dispara o FadeUp do CSS
+                c.classList.add('is-loaded');
             });
-        }, 1200);
+        }, 800);
 
     } catch (error) {
-        console.error("Erro ao carregar gráficos:", error);
+        console.error("❌ Erro ao carregar dados locais:", error);
     }
 }
+
+function renderIdebLocal(dInit, dEnd) {
+    const chart = createChart('chartIdeb', 'bar', {
+        labels: dInit.labels,
+        datasets: [{ label: 'Nota', data: dInit.values, backgroundColor: COLORS.yellow, borderRadius: 4 }]
+    });
+
+    document.getElementById('filterIdebType')?.addEventListener('change', function() {
+        const isInit = this.value === 'iniciais';
+        const data = isInit ? dInit : dEnd;
+        updateChartDynamic(chart, isInit ? 'Anos Iniciais' : 'Anos Finais', data, COLORS.yellow);
+    });
+}
+
+function renderTaxasLocal(dDist, dAban) {
+    const chart = createChart('chartTaxasRendimento', 'bar', {
+        labels: dDist.labels,
+        datasets: [{ label: 'Taxa', data: dDist.values, backgroundColor: COLORS.green, borderRadius: 4 }]
+    });
+
+    document.getElementById('filterTaxasType')?.addEventListener('change', function() {
+        const isDist = this.value === 'distorcao';
+        const data = isDist ? dDist : dAban;
+        updateChartDynamic(chart, isDist ? 'Distorção' : 'Abandono', data, isDist ? COLORS.green : COLORS.pink);
+    });
+}
+
+function renderEvolucaoMatriculasLocal(dMat) {
+    createChart('chartEvolucaoMatriculas', 'line', {
+        labels: dMat.labels,
+        datasets: [{ label: 'Matrículas', data: dMat.values, borderColor: COLORS.blue, fill: true, tension: 0.4 }]
+    });
+}
+
+/* Nova função para o gráfico de Matrículas por Nível */
+function renderMatriculasPorNivel(dInf, dFund) {
+    // Se os dados não existirem no JSON, usa o Fallback de segurança
+    const inf = dInf || FALLBACK_DATA.mat_infantil;
+    const fund = dFund || FALLBACK_DATA.mat_fundamental;
+    
+    // Calcula o total somando Infantil + Fundamental
+    const dTotal = { 
+        labels: inf.labels, 
+        values: inf.values.map((val, i) => val + (fund.values[i] || 0)) 
+    };
+
+    const chart = createChart('chartMatriculas', 'bar', {
+        labels: dTotal.labels,
+        datasets: [{ label: 'Total', data: dTotal.values, backgroundColor: COLORS.blue, borderRadius: 4 }]
+    });
+
+    // Filtro dinâmico para trocar entre Total, Infantil e Fundamental
+    document.getElementById('filterMatriculasType')?.addEventListener('change', function() {
+        let targetData, label, color;
+        if (this.value === 'total') { 
+            targetData = dTotal; label = 'Total'; color = COLORS.blue; 
+        } else if (this.value === 'infantil') { 
+            targetData = inf; label = 'Infantil'; color = COLORS.green; 
+        } else { 
+            targetData = fund; label = 'Fundamental'; color = COLORS.yellow; 
+        }
+        updateChartDynamic(chart, label, targetData, color);
+    });
+}
+
 
 /* --- FUNÇÃO AUXILIAR: CALCULA TETO DA GRADE (SUPERIOR PRÓXIMO) --- */
 function getSuperiorProximo(values) {
