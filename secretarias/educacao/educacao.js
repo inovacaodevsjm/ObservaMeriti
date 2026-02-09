@@ -31,7 +31,6 @@ const COLORS = { blue: '#00A8E8', green: '#009039', yellow: '#FDC806', pink: '#F
 let chartInstances = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    initKpiCounters();
     initAllCharts();
 });
 
@@ -53,10 +52,9 @@ async function initAllCharts() {
     const cards = document.querySelectorAll('.sebrae-card, .analise-card');
     const banners = document.querySelectorAll('.status-banner');
     
-    // --- RESTAURA O CARREGAMENTO TECNOLÓGICO (IGUAL AO INDEX) ---
+    // 1. Ativa o Loader Tecnológico
     cards.forEach(card => {
         card.classList.add('is-loading');
-        // Cria o container do loader se ele não existir
         if (!card.querySelector('.loader-container')) {
             const loader = document.createElement('div');
             loader.className = 'loader-container';
@@ -70,24 +68,50 @@ async function initAllCharts() {
         if (!response.ok) throw new Error("Erro ao carregar JSON");
         const bd = await response.json();
 
-        // Renderiza os dados por trás do loader
-        renderIdebLocal(bd.ideb_iniciais, bd.ideb_finais);
-        renderTaxasLocal(bd.taxa_distorcao, bd.taxa_abandono);
-        renderMatriculasPorNivel(bd.mat_infantil, bd.mat_fundamental);
-        if (typeof renderEvolucaoMatriculasLocal === "function") {
-            renderEvolucaoMatriculasLocal(bd.matriculas || FALLBACK_DATA.matriculas);
-        }
+        // --- PARTE 1: ATUALIZAÇÃO DOS KPIS ---
+        const kpiMap = {
+            'kpi-escolas': bd.kpi_escolas,
+            'kpi-alunos': bd.kpi_alunos,
+            'kpi-professores': bd.kpi_professores,
+            'kpi-funcionarios': bd.kpi_funcionarios,
+            'kpi-turmas': bd.kpi_turmas,
+            'kpi-responsaveis': bd.kpi_responsaveis,
+            'kpi-vagas': bd.kpi_vagas,
+            'kpi-aulas': bd.kpi_aulas,
+            'kpi-eventos': bd.kpi_eventos,
+            'kpi-refeicoes': bd.kpi_refeicoes,
+            'kpi-distorcao-ano': bd.kpi_distorcao_ano
+        };
 
-        // --- SIMULAÇÃO DE VERIFICAÇÃO (2 SEGUNDOS) ---
+        Object.keys(kpiMap).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.setAttribute('data-target', kpiMap[id] || 0);
+                el.innerText = "0";
+            }
+        });
+
+        // Inicia contagem dos números IMEDIATAMENTE
+        initKpiCounters();
+
+        // --- PARTE 2: INICIALIZAÇÃO DOS GRÁFICOS (RESTAURADA) ---
+        // Aqui chamamos as funções que renderizam os gráficos usando os dados do JSON
+        if (bd.ideb_iniciais) renderIdebLocal(bd.ideb_iniciais, bd.ideb_finais);
+        if (bd.taxa_distorcao) renderTaxasLocal(bd.taxa_distorcao, bd.taxa_abandono);
+        if (bd.mat_infantil) renderMatriculasPorNivel(bd.mat_infantil, bd.mat_fundamental);
+        
+        // Se o dado de evolução de matrículas existir no JSON, usa ele, senão Fallback
+        const dMat = bd.matriculas || FALLBACK_DATA.matriculas;
+        renderEvolucaoMatriculasLocal(dMat);
+
+        // --- PARTE 3: FINALIZAÇÃO DOS LOADERS ---
         setTimeout(() => {
             const sidraStatus = bd.status_das_fontes?.find(s => s.includes("SIDRA/IBGE"));
             const isOffline = sidraStatus && sidraStatus.includes("Offline");
 
-            // 1. Atualiza os Banners
             banners.forEach(banner => {
                 const statusText = banner.querySelector('span');
                 banner.classList.remove('status-loading');
-
                 if (isOffline) {
                     statusText.innerText = `FONTE: SIDRA/IBGE (INSTÁVEL) - USANDO BASE LOCAL PROTEGIDA (${bd.ultima_sincronizacao})`;
                     banner.classList.add('status-warning');
@@ -97,7 +121,6 @@ async function initAllCharts() {
                 }
             });
 
-            // 2. Remove os Loaders Tecnológicos e revela os gráficos
             document.querySelectorAll('.loader-container').forEach(l => l.remove());
             cards.forEach(card => {
                 card.classList.remove('is-loading');
@@ -107,7 +130,6 @@ async function initAllCharts() {
 
     } catch (error) {
         console.error("Erro ao inicializar painel:", error);
-        // Em caso de erro, remove os loaders para não travar a tela
         document.querySelectorAll('.loader-container').forEach(l => l.remove());
     }
 }

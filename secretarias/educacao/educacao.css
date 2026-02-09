@@ -80,11 +80,48 @@
     display: flex; 
     flex-wrap: wrap; 
     justify-content: center; 
-    gap: 10px; 
-    padding: 0 20px; 
+    gap: 8px; 
+    padding: 10px 20px; 
     width: 100%; 
     max-width: 1200px; 
     margin: 0 auto;
+}
+
+/* Redução geral do container do card */
+.kpi-card { 
+    padding: 15px;            /* Reduzido de 25px */
+    flex: 1 1 180px;          /* Largura mínima reduzida de 220px para 180px */
+    max-width: 220px;         /* Reduzido de 280px */
+    min-height: 120px;        /* Reduzido de 150px */
+    border-radius: 10px;      /* Bordas um pouco mais finas */
+    background: rgba(30, 32, 36, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    text-align: center; 
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+/* Redução do ícone */
+.kpi-icon { 
+    font-size: 1.3rem;        /* Menor e mais discreto */
+    margin-bottom: 6px; 
+}
+
+/* Redução do número (Valor) */
+.kpi-value { 
+    font-size: 1.4rem;        /* Tamanho otimizado para não quebrar linha */
+    margin-bottom: 2px;
+}
+
+/* Redução do título */
+.kpi-title { 
+    font-size: 0.7rem;        /* Letras menores para o texto explicativo */
+    line-height: 1.1;
+    font-weight: 600;
 }
 
 .kpi-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
@@ -447,9 +484,14 @@ body.light-theme .theme-btn i {
 
     /* KPIs */
     .kpi-card { 
-        flex: 1 1 100%; /* Ocupa largura total no celular */
-        max-width: 100%; 
-    }
+    padding: 12px 8px;        /* Reduzido drasticamente de 25px */
+    flex: 1 1 150px;          /* Base de largura menor para caberem mais por linha */
+    max-width: 170px;         /* Reduzido de 280px */
+    min-height: 100px;        /* Reduzido de 150px */
+    border-radius: 8px;
+    background: rgba(30, 32, 36, 0.6);
+    backdrop-filter: blur(10px);
+}
 
     /* Gráficos e Cards */
     .sebrae-card {
